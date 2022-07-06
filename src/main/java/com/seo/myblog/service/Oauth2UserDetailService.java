@@ -1,4 +1,4 @@
-package com.seo.myblog.controller;
+package com.seo.myblog.service;
 
 import com.seo.myblog.Repository.MemberRepository;
 import com.seo.myblog.dto.MemberFormDTO;
