@@ -35,10 +35,11 @@ public class SecurityConfig {
 
         http.oauth2Login().defaultSuccessUrl("/blog/"); //소셜로그인 활성화 및 성공시 URL 설정
 
+        http.csrf().ignoringAntMatchers("/ajax/**");
 
         http.authorizeRequests()
-                .mvcMatchers("/css/**","/js/**","/img/**").permitAll() //css js img등 정적파일 항상 접근 허용
-                .mvcMatchers("/","/member/**","/blog/**", "/images/**").permitAll() //기본 주소 항상 접근 허용
+                .mvcMatchers("/css/**","/js/**","/img/**","/ajax/**").permitAll() //css js img등 정적파일 항상 접근 허용
+                .mvcMatchers("/","/member/**","/blog/**", "/images/**","/test/**").permitAll() //기본 주소 항상 접근 허용
                 .mvcMatchers("/admin/**").hasRole("ADMIN") //admin으로 시작하는 주소 admin권한을 가져야 접근 가능하도록 설정
                 .anyRequest().authenticated(); //나머지 url에 대해서는 로그인 해야 접근 가능
 
