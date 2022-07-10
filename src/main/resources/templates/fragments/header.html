@@ -25,13 +25,49 @@
                 <!--로그인 버튼 -->
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal">Log In</a>
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal">로그인</a>
                     </li>
 
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal" th:text="${#authentication.principal.Nick} + ' 님'"></a>
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" th:text="${#authentication.principal.Nick} + ' 님'" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-expanded="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/member/logout">로그아웃</a>
+                        </div>
                     </li>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel"><i class="fas fa-sign-in-alt"></i>&nbsp 로그인</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="/oauth2/authorization/google">
+                                <i class="fab fa-google"></i>&nbsp&nbsp 구글 아이디로 로그인
+                            </a>
+                            <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="/member/login">
+                                <i class="far fa-envelope"></i>&nbsp&nbsp 이메일로 로그인
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a role="button" class="btn btn-outline-dark btn-block btn-sm" href="/member/new">
+                                <i class="far fa-envelope"></i>&nbsp&nbsp 이메일로 회원가입
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
