@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class MemberController {
 
     /*회원가입 요청 처리 메서드*/
     @PostMapping(value = "/new")
-    public String MemberForm(@Validated MemberFormDTO memberFormDTO, BindingResult bindingResult, Model model){
+    public String MemberForm(@Validated MemberFormDTO memberFormDTO, BindingResult bindingResult, Model model, RedirectAttributes re){
         if(bindingResult.hasErrors()){
             return "/member/memberForm"; //필드값 바인딩 에러 시 페이지 다시반환
         }
@@ -45,6 +46,7 @@ public class MemberController {
             return "/member/memberForm";
         }
 
+        re.addFlashAttribute("msg","회원가입에 성공하였습니다.");
         return "redirect:/blog/"; //가입성공시 블로그 메인 화면 리다이렉트
     }
 
@@ -59,6 +61,13 @@ public class MemberController {
     public String memberLoginError(Model model){
         model.addAttribute("errMsg", "아이디나 비밀번호가 올바르지 않습니다.");
         return "/member/memberLoginForm"; //에러메시지 담아서 로그인 화면 반환
+    }
+
+    /*oauth 로그인 실패시 처리*/
+    @GetMapping("/member/oauth/error")
+    public String memberOathLoginError(RedirectAttributes re){
+        re.addFlashAttribute("msg","이 계정으로는 이용할 수 없습니다. 다른 계정을 이용하십시오.");
+        return "redirect:/blog/"; 
     }
 
 }

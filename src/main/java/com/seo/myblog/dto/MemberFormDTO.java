@@ -21,4 +21,5 @@ public class MemberFormDTO {
     private String nick;//닉네임
     
     private String address;//주소
+
 }

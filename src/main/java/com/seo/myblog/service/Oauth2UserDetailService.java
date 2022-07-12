@@ -53,7 +53,7 @@ public class Oauth2UserDetailService extends DefaultOAuth2UserService {
     }
 
     public Member savedMember(String email, String Nick){
-        Optional<Member> chkMember = memberRepository.findByEmail(email); //이미 멤버가 있는지 확인
+        Optional<Member> chkMember = memberRepository.findByEmailAndIsSocial(email,true); //이미 소셜로그인으로 가입한 멤버가 있는지 확인
 
         if(chkMember.isPresent()){ //존재하면 Member db저장 없이 바로 반환
             return chkMember.get();
@@ -65,7 +65,8 @@ public class Oauth2UserDetailService extends DefaultOAuth2UserService {
         memberFormDTO.setNick(Nick); //MemberForm 정보 생성
 
         Member member = Member.createMember(memberFormDTO,passwordEncoder); //Member 객체생성
-
+        member.setIsSocial(true); //소셜로그인이므로 isSocial True로 설정함
+        
         return memberRepository.save(member);
 
     }

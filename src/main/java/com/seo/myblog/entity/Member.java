@@ -12,13 +12,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "member")
 @Getter @Setter @ToString
-public class Member {
+public class Member extends BaseTimeEntity{
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; //기본키
 
-    @Column(unique = true)
     private String email; //이메일
 
     private String password; //패스워드
@@ -27,6 +26,8 @@ public class Member {
     private String nick; //닉네임
 
     private String address; //주소
+    
+    private Boolean isSocial; //소셜로그인 여부
 
     @Enumerated(EnumType.STRING)
     private MemberRole role; //회원권한(String 형식으로 DB저장)
@@ -40,6 +41,7 @@ public class Member {
         member.nick = memberFormDTO.getNick();
         member.address = memberFormDTO.getAddress();
         member.role = MemberRole.USER; //일반 유저 권한으로 설정
+        member.isSocial = false;
 
         return member;
     }

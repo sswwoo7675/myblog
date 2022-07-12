@@ -54,7 +54,7 @@ class MemberServiceTest {
             e.getMessage();
         }
 
-        Member savedMember = memberRepository.findByEmail(memberFormDTO.getEmail()).get(); //검증위해 저장된 Member객체 불러옴
+        Member savedMember = memberRepository.findByEmailAndIsSocial(memberFormDTO.getEmail(),false).get(); //검증위해 저장된 Member객체 불러옴
 
         Assertions.assertEquals(memberFormDTO.getNick(), savedMember.getNick()); //닉네임이 같은지 비교
 

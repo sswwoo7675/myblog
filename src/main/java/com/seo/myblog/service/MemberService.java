@@ -35,7 +35,7 @@ public class MemberService implements UserDetailsService { //UserDetailsService 
 
     //중복 회원 확인 메서드(이메일과 닉네임 체크)
     public void validateDuplicateMember(String email, String nick) throws DuplicateMemberException{
-        Optional<Member> findMember1 = memberRepository.findByEmail(email); //이메일로 Member찾기
+        Optional<Member> findMember1 = memberRepository.findByEmailAndIsSocial(email,false); //이메일, 소셜여부로 Member찾기
         Optional<Member> findMember2 = memberRepository.findByNick(nick); //닉네임으로 Member찾기
 
         if(findMember1.isPresent()){
@@ -50,7 +50,7 @@ public class MemberService implements UserDetailsService { //UserDetailsService 
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         //db에서 이메일로 Member를 찾고 없을경우 UsernameNotFoundException 예외발생
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException(email));
+        Member member = memberRepository.findByEmailAndIsSocial(email,false).orElseThrow(()->new UsernameNotFoundException(email));
 
         /*return User.builder()
                 .username(member.getEmail())

@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout")) //로그아웃 URL 설정
                 .logoutSuccessUrl("/blog/"); //로그아웃 성공 후 이동할 URL 설정
 
-        http.oauth2Login().defaultSuccessUrl("/blog/"); //소셜로그인 활성화 및 성공시 URL 설정
+        http.oauth2Login()
+                .defaultSuccessUrl("/blog/"); //소셜로그인 활성화 및 성공시 URL 설정
 
         http.csrf().ignoringAntMatchers("/ajax/**");
 
