@@ -1,8 +1,12 @@
 package com.seo.myblog.controller;
 
+import com.seo.myblog.dto.MemberFormDTO;
+import com.seo.myblog.dto.PostFormDTO;
 import lombok.Getter;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class BlogController {
@@ -15,7 +19,16 @@ public class BlogController {
 
     /*포스트 쓰기 화면 출력*/
     @GetMapping(value = {"/admin/blogPost"})
-    public String postForm(){
+    public String postForm(Model model) {
+        model.addAttribute("postFormDTO", new PostFormDTO());
         return "/blog/postForm";
+    }
+
+    /*포스트 글 쓰기 처리*/
+    @PostMapping(value = {"/admin/blogPost"})
+    public void postForm(PostFormDTO postFormDTO){
+        System.out.println(postFormDTO.getUploadFile().isEmpty());
+        System.out.println(postFormDTO.getHeadImgFile().isEmpty());
+        System.out.println(postFormDTO);
     }
 }
