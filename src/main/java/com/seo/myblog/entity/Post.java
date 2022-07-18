@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Getter @Setter @ToString
 @Entity @Table(name = "post")
-public class Post {
+public class Post extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "post_id")
@@ -20,5 +20,11 @@ public class Post {
     private String hook_text; //요약
 
     private String content; //본문
+    
+    private String tags; //태그
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category; //카테고리
 
 }
