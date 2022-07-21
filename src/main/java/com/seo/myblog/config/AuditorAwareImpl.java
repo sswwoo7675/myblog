@@ -20,11 +20,11 @@ public class AuditorAwareImpl implements AuditorAware<String> {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); //인증정보 가져오기
         String nick = "";
 
-        if(authentication == null || authentication.getName().equals("anonymousUser")){ //인증정보가 존재하면 닉네임을 가져옴
+        if(authentication == null || authentication.getName().equals("anonymousUser")){ //인증정보가 존재하지 않을경우 null 반환
             return null;
         }
 
-        UserInfoDTO userInfoDTO = (UserInfoDTO) authentication.getPrincipal();
-        return Optional.of(userInfoDTO.getNick());
+        UserInfoDTO userInfoDTO = (UserInfoDTO) authentication.getPrincipal(); //로그인유저정보 가져옴
+        return Optional.of(userInfoDTO.getNick()); //닉네임을 등록자와 수정자로 지정
     }
 }

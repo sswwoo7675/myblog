@@ -17,11 +17,11 @@ public class AttachedFile {
     @Column(name = "attached_file_id")
     private Long id; //기본키
 
-    private String imgName; //헤드 이미지 파일명(서버에 저장된 파일명)
+    private String fileName; //첨부파일명(서버에 저장된 파일명)
 
-    private String orgImgName; //원본 이미지 파일명
+    private String orgFileName; //원본 첨부파일명
 
-    private String imgUrl; //이미지 조회 경로
+    private String fileUrl; //첨부파일 조회 경로
 
     @ManyToOne
     @JoinColumn(name = "post_id")
