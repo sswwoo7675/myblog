@@ -80,6 +80,4 @@ gen
 
 #보안 설정정보
 /src/main/resources/application-oauth.properties
-/src/main/resources/application.properties
-/src/main/resources/application-test.properties
 /src/main/resources/application-db.properties
