@@ -21,6 +21,9 @@ public class AttachedFileService {
 
     private final AttachedFileRepository attachedFileRepository;
 
+    /*
+    * 첨부파일 업로드 및 db에 저장 메서드
+    * */
     public Long saveAttachedFile(MultipartFile multipartFile, AttachedFile attachedFile) throws Exception{
         String orgFileName = multipartFile.getOriginalFilename(); //파일명 가져오기
         String fileUrl = fileService.uploadFile(attachedFileLocation,orgFileName, multipartFile.getBytes()); //파일 업로드 수행

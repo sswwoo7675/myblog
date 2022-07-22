@@ -1,8 +1,10 @@
 package com.seo.myblog.dto;
 
+import com.seo.myblog.entity.Post;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
@@ -21,7 +23,7 @@ public class PostFormDTO {
 
     String content; //글 본분
 
-    Long category; //카테고리 번호
+    Long categoryId; //카테고리 번호
 
     String tags; //글 태그
 
@@ -30,5 +32,12 @@ public class PostFormDTO {
     MultipartFile headImgFile; //헤드 이미지 파일
 
     MultipartFile uploadFile; //첨부파일
+
+    private static ModelMapper modelMapper = new ModelMapper();
+
+    //DTO => Entity
+    public Post createPost(){
+        return modelMapper.map(this, Post.class);
+    }
 
 }
