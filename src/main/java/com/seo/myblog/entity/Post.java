@@ -19,6 +19,7 @@ public class Post extends BaseEntity{
 
     private String hook_text; //요약
 
+    @Lob
     private String content; //본문
     
     private String tags; //태그

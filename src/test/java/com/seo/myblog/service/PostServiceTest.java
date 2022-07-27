@@ -59,7 +59,8 @@ class PostServiceTest {
 
     @Test
     void makeTagString() {
-        String testTag = "태그1, 태그2 ;태그3; 태그4,태그5 ";
+        String testTag = "태그1";
+        //String testTag = "태그1, 태그2 ;태그3; 태그4,태그5 ";
         String makeTag;
 
         makeTag = postService.makeTagString(testTag);

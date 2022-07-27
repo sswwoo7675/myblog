@@ -33,10 +33,12 @@ public class PostService {
     public Long addPost(PostFormDTO postFormDTO) throws Exception{
         Post post = postFormDTO.createPost();
 
-        //태그문자열 변환
+        //태그 정보 존재하면 태그문자열 변환
         String oldTag = post.getTags();
-        String newTag = makeTagString(oldTag);
-        post.setTags(newTag);
+        if(oldTag != null && oldTag.isBlank()){
+            String newTag = makeTagString(oldTag);
+            post.setTags(newTag);
+        }
 
         //카테고리 정보가 존재하면
         if(postFormDTO.getCategoryId() != null){

@@ -23,7 +23,7 @@ public class HeadImg {
 
     private String imgUrl; //이미지 조회 경로
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
 }

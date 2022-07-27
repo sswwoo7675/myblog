@@ -34,7 +34,9 @@ public class MemberController {
 
     /*회원가입 요청 처리 메서드*/
     @PostMapping(value = "/new")
-    public String MemberForm(@Validated MemberFormDTO memberFormDTO, BindingResult bindingResult, Model model, RedirectAttributes re){
+    public String MemberForm(@Validated MemberFormDTO memberFormDTO,
+                             BindingResult bindingResult, Model model,
+                             RedirectAttributes re){
         if(bindingResult.hasErrors()){
             return "/member/memberForm"; //필드값 바인딩 에러 시 페이지 다시반환
         }

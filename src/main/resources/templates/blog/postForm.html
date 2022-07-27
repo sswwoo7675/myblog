@@ -17,6 +17,12 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
+        let errMsg = [[${errMsg}]];
+
+        if(errMsg){
+            alert(errMsg);
+        }
+
         $(document).ready(function (){
             $('#postbutton').on("click",function (e){
                e.preventDefault();
@@ -53,12 +59,15 @@
         </div>
         <div id="input_uploadFile" class="form-group">
             <label for="uploadFile">파일 업로드</label>
-            <div><input type="file" th:field="*{uploadFile}" accept="image/*" /></div>
+            <div><input type="file" th:field="*{uploadFile}" /></div>
         </div>
         <div id="input_category" class="form-group">
             <label for="category">카테고리</label>
-            <select th:field="*{category}" class="form-control">
+            <select th:field="*{categoryId}" class="form-control">
                 <option value="" selected>--------------</option>
+                <th:block th:each="categoryDTO:${categoryDTOList}">
+                    <option th:value="${categoryDTO.getId()}" th:text="${categoryDTO.getName()}"></option>
+                </th:block>
             </select>
         </div>
         <div id="input_tags" class="form-group">
