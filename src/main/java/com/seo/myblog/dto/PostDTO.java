@@ -21,12 +21,16 @@ public class PostDTO {
 
     private String headImgUrl; //헤드 이미지 url
 
+    private String attachedFileUrl; //첨부파일 url
+
+    private String attachedFileName; //첨부파일 원 파일명;
+
     private String writer; //작성자
 
     private List<String> tags; //태그
 
     private String postDate; //작성시간
 
-    private String categoryName; //카테고리 이름
+    private CategoryDTO categoryDTO; //카테고리 정보
 
 }

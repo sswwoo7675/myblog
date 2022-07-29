@@ -2,6 +2,7 @@ package com.seo.myblog.service;
 
 import com.seo.myblog.Repository.ContentImgRepository;
 import com.seo.myblog.Repository.PostRepository;
+import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
 import com.seo.myblog.entity.ContentImg;
 import com.seo.myblog.entity.Post;
@@ -42,7 +43,7 @@ class PostServiceTest {
         //테스트용 Post 내용 설정
         String testTitle = "testTitle";
         String testContent = "testContent";
-        String tags = "태그1, 태그2 ;태그3; 태그4,태그5 ";
+        String tags = "가;나/ 다";
         List<String> contentImgs = new ArrayList<>();
         contentImgs.add("/image/content/2022/01/02/aaabb1.png");
         contentImgs.add("/image/content/2022/01/02/aaabb2.png");
@@ -94,5 +95,12 @@ class PostServiceTest {
         }
 
 
+    }
+
+
+    @Test
+    void getPost() throws Exception{
+        PostDTO postDTO = postService.getPost(13L);
+        System.out.println(postDTO);
     }
 }

@@ -4,17 +4,15 @@
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="script">
-    <script th:inline="javascript">
-        let msg = [[${msg}]];
 
-        if(msg){
-            alert(msg);
-        }
-    </script>
 </th:block>
 
 <div layout:fragment="content">
-    <h1>새 포스트 작성</h1>
+    <div id="post-area">
+
+        <!-- Title -->
+        <h1 class="mt-4" th:text="${}"></h1>
+    </div>
 </div>
 
 </html>

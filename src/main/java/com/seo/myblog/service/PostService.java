@@ -1,7 +1,11 @@
 package com.seo.myblog.service;
 
+import com.seo.myblog.Repository.AttachedFileRepository;
 import com.seo.myblog.Repository.CategoryRepository;
+import com.seo.myblog.Repository.HeadImgRepository;
 import com.seo.myblog.Repository.PostRepository;
+import com.seo.myblog.dto.CategoryDTO;
+import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
 import com.seo.myblog.entity.*;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -21,21 +28,25 @@ public class PostService {
 
     private final HeadImgService headImgService;
 
+    private final HeadImgRepository headImgRepository;
+
     private final ContentImgService contentImgService;
 
     private final CategoryRepository categoryRepository;
 
     private final AttachedFileService attachedFileService;
+
+    private final AttachedFileRepository attachedFileRepository;
     
     /*
-    * 포스트 작성
+    * 포스트 저장
     * */
     public Long addPost(PostFormDTO postFormDTO) throws Exception{
         Post post = postFormDTO.createPost();
 
         //태그 정보 존재하면 태그문자열 변환
         String oldTag = post.getTags();
-        if(oldTag != null && oldTag.isBlank()){
+        if(oldTag != null && !oldTag.isBlank()){
             String newTag = makeTagString(oldTag);
             post.setTags(newTag);
         }
@@ -80,6 +91,47 @@ public class PostService {
         }
 
         return savedPost.getId();
+    }
+    
+    /*
+    * 포스트 정보 불러오기
+    * */
+    public PostDTO getPost(Long postId) throws Exception{
+        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+        PostDTO postDTO = new PostDTO();
+
+        Category category = post.getCategory();
+        CategoryDTO categoryDTO;
+        if(category != null){
+            categoryDTO = CategoryDTO.of(category);
+            postDTO.setCategoryDTO(categoryDTO);
+        }
+
+        Optional<HeadImg> optionalHeadImg = headImgRepository.findByPostId(postId);
+        Optional<AttachedFile> optionalAttachedFile = attachedFileRepository.findByPostId(postId);
+
+        if(optionalHeadImg.isPresent()){
+            HeadImg headImg = optionalHeadImg.get();
+            postDTO.setHeadImgUrl(headImg.getImgUrl());
+        }
+
+        if(optionalAttachedFile.isPresent()){
+            AttachedFile attachedFile = optionalAttachedFile.get();
+            postDTO.setAttachedFileUrl(attachedFile.getFileUrl());
+            postDTO.setAttachedFileName(attachedFile.getOrgFileName());
+        }
+
+        postDTO.setTitle(post.getTitle());
+        postDTO.setHook_text(post.getHook_text());
+        postDTO.setContent(post.getContent());
+        postDTO.setWriter(post.getCreatedBy());
+        if(post.getTags() != null && !post.getTags().isBlank()){
+            postDTO.setTags(Arrays.asList(post.getTags().split("/")));
+        }
+        postDTO.setPostDate(post.getRegTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+
+        return postDTO;
+
     }
 
     /*
