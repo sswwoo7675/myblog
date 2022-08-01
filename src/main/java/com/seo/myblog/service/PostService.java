@@ -9,16 +9,21 @@ import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
 import com.seo.myblog.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import javax.swing.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -97,35 +102,41 @@ public class PostService {
     * 포스트 정보 불러오기
     * */
     public PostDTO getPost(Long postId) throws Exception{
-        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new); //포스트 Entity 불러오기
         PostDTO postDTO = new PostDTO();
 
-        Category category = post.getCategory();
+        Category category = post.getCategory();  //포스트의 카테고리 조회
         CategoryDTO categoryDTO;
-        if(category != null){
+        if(category != null){ //카테고리가 존재하면 카테고리 정보 postDTO에 저장
             categoryDTO = CategoryDTO.of(category);
             postDTO.setCategoryDTO(categoryDTO);
         }
 
+        //postId로 headImg와 AttachedFile DB에서 불러오기
         Optional<HeadImg> optionalHeadImg = headImgRepository.findByPostId(postId);
         Optional<AttachedFile> optionalAttachedFile = attachedFileRepository.findByPostId(postId);
 
+        //headImg가 존재하면 postDTO에 url 정보 저장
         if(optionalHeadImg.isPresent()){
             HeadImg headImg = optionalHeadImg.get();
             postDTO.setHeadImgUrl(headImg.getImgUrl());
         }
 
+        //attachedFile이 존재하면 postDTO에 url과 파일이름 정보 저장
         if(optionalAttachedFile.isPresent()){
             AttachedFile attachedFile = optionalAttachedFile.get();
             postDTO.setAttachedFileUrl(attachedFile.getFileUrl());
             postDTO.setAttachedFileName(attachedFile.getOrgFileName());
         }
 
+        //post Entity 내용을 postDTO에 저장
         postDTO.setPostId(post.getId());
         postDTO.setTitle(post.getTitle());
         postDTO.setHook_text(post.getHook_text());
         postDTO.setContent(post.getContent());
         postDTO.setWriter(post.getCreatedBy());
+
+        //태그가 존재할 경우 태그 각각을 리스트 형태로 저장함
         if(post.getTags() != null && !post.getTags().isBlank()){
             postDTO.setTags(Arrays.asList(post.getTags().split("/")));
         }
@@ -133,6 +144,48 @@ public class PostService {
 
         return postDTO;
 
+    }
+
+    /*
+    * 모든 포스트 정보 조회
+    * */
+    public Page<PostDTO> getAllPost(Pageable pageable){
+        List<Post> postList = postRepository.findPosts(pageable); //모든 post조회
+        Long count = postRepository.count(); //엔티티 총 개수
+        
+        //Entity List를 DTO List로 변환
+        List<PostDTO> postDTOList= postList.stream().map(post -> {
+            PostDTO postDTO = new PostDTO();
+
+            Category category = post.getCategory();  //포스트의 카테고리 조회
+            CategoryDTO categoryDTO;
+            if(category != null){ //카테고리가 존재하면 카테고리 정보 postDTO에 저장
+                categoryDTO = CategoryDTO.of(category);
+                postDTO.setCategoryDTO(categoryDTO);
+            }
+
+            //postId로 headImg DB에서 불러오기
+            Optional<HeadImg> optionalHeadImg = headImgRepository.findByPostId(post.getId());
+            //headImg가 존재하면 postDTO에 url 정보 저장
+            if(optionalHeadImg.isPresent()){
+                HeadImg headImg = optionalHeadImg.get();
+                postDTO.setHeadImgUrl(headImg.getImgUrl());
+            }
+
+            postDTO.setPostId(post.getId());
+            postDTO.setTitle(post.getTitle());
+            postDTO.setHook_text(post.getHook_text());
+            postDTO.setWriter(post.getCreatedBy());
+            postDTO.setPostDate(post.getRegTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            //태그가 존재할 경우 태그 각각을 리스트 형태로 저장함
+            if(post.getTags() != null && !post.getTags().isBlank()){
+                postDTO.setTags(Arrays.asList(post.getTags().split("/")));
+            }
+
+            return postDTO;
+        }).collect(Collectors.toList());
+
+        return new PageImpl<PostDTO>(postDTOList,pageable,count);
     }
 
     /*

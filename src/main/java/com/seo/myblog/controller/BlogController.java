@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class BlogController {
 
     //블로그 메인 화면 출력//
     @GetMapping(value = {"/blog/","/blog/list"})
-    public String blogList(){
+    public String blogList(Optional<Long> page){
         return "/blog/list";
     }
 

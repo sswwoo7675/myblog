@@ -9,6 +9,9 @@ import com.seo.myblog.entity.Post;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,5 +105,17 @@ class PostServiceTest {
     void getPost() throws Exception{
         PostDTO postDTO = postService.getPost(5L);
         System.out.println(postDTO);
+    }
+
+    @Test
+    void getAllPost() {
+        Pageable pageable = PageRequest.of(3,2);
+
+        Page<PostDTO> postDTOPage = postService.getAllPost(pageable);
+
+        System.out.println(postDTOPage.getTotalPages());
+        postDTOPage.getContent().forEach(postDTO -> {
+            System.out.println(postDTO);
+        });
     }
 }
