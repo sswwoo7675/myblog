@@ -3,23 +3,30 @@ package com.seo.myblog.controller;
 import com.seo.myblog.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
-public class ContentImgUploadController {
+public class FileController {
 
     @Value("${contentImgLocation}")
     String contentImgLocation; //c:/myblog/content
@@ -38,5 +45,27 @@ public class ContentImgUploadController {
         returnData.put("url","/images/content/" + uploadFilePath); //이미지 업로드 정보 생성
 
         return new ResponseEntity<Map>(returnData, HttpStatus.OK); //이미지 업로드 정보 반환
+    }
+
+    /*
+    * 파일 다운로드 함수
+    * */
+    @GetMapping(value = "/ajax/fileDownload")
+    public @ResponseBody ResponseEntity<Object> download(String url, String orgFileName){
+        String path = "C:/myblog" + url;
+
+        try {
+            Path filePath = Paths.get(path);
+            Resource resource = new InputStreamResource(Files.newInputStream(filePath)); //파일 리소스 얻기
+
+            File file = new File(path);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(orgFileName).build());
+
+            return new ResponseEntity<Object>(resource, headers, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
+        }
     }
 }

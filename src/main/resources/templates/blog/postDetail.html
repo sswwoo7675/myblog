@@ -61,7 +61,7 @@
         </th:block>
 
         <!-- 첨부파일 -->
-        <a href="#" th:if="${postDTO.attachedFileUrl != null}" class="btn btn-outline-dark" role="button" download>
+        <a th:href="@{/ajax/fileDownload(url=${postDTO.attachedFileUrl}, orgFileName=${postDTO.attachedFileName})}" th:if="${postDTO.attachedFileUrl != null}" class="btn btn-outline-dark" role="button" download>
             <i class="fa fa-file"></i> [[${postDTO.attachedFileName}]]
         </a>
         <hr />

@@ -27,7 +27,7 @@ public class AttachedFileService {
     public Long saveAttachedFile(MultipartFile multipartFile, AttachedFile attachedFile) throws Exception{
         String orgFileName = multipartFile.getOriginalFilename(); //파일명 가져오기
         String fileUrl = fileService.uploadFile(attachedFileLocation,orgFileName, multipartFile.getBytes()); //파일 업로드 수행
-        fileUrl = "/myblog/attached/" + fileUrl; //저장된 파일 full경로
+        fileUrl = "/attached/" + fileUrl; //저장된 파일 full경로
         String fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1); //full경로로 부터 파일이름만 추출
 
         attachedFile.setFileName(fileName);
