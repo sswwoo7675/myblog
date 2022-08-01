@@ -10,14 +10,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,7 +49,7 @@ public class FileController {
     * 파일 다운로드 함수
     * */
     @GetMapping(value = "/ajax/fileDownload")
-    public @ResponseBody ResponseEntity<Object> download(String url, String orgFileName){
+    public @ResponseBody ResponseEntity<Object> download(@RequestHeader("User-Agent") String agent, String url, String orgFileName){
         String path = "C:/myblog" + url;
 
         try {
@@ -61,11 +59,34 @@ public class FileController {
             File file = new File(path);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(orgFileName).build());
+            
+            String fileName = transFileName(agent,orgFileName); //한글 파일 처리를 위한 인코딩
+            
+            headers.setContentDisposition(ContentDisposition.builder("attachment").filename(fileName).build());
 
             return new ResponseEntity<Object>(resource, headers, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<Object>(null, HttpStatus.CONFLICT);
         }
+    }
+
+    /*
+    * 한글 파일명 처리 관련 인코딩 함수
+    * */
+    public String transFileName(String agent, String orgFileName) throws Exception{
+
+        String fileName;
+
+        if(agent.contains("Trident"))//Internet Explore
+            fileName = URLEncoder.encode(orgFileName, "UTF-8").replaceAll("\\+", " ");
+
+        else if(agent.contains("Edge")) //Micro Edge
+            fileName = URLEncoder.encode(orgFileName, "UTF-8");
+
+        else //Chrome
+            fileName = new String(orgFileName.getBytes("UTF-8"), "ISO-8859-1");
+
+        return fileName;
+
     }
 }
