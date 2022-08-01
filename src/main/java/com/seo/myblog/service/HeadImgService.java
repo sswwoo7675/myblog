@@ -26,7 +26,7 @@ public class HeadImgService {
     public Long saveHeadImg(MultipartFile multipartFile, HeadImg headImg) throws Exception{
         String orgImgName = multipartFile.getOriginalFilename(); //이미지 파일명 가져오기
         String imgUrl = fileService.uploadFile(headImgLocation, orgImgName,multipartFile.getBytes()); //이미지 저장후 저장경로 가져옴
-        imgUrl = "/myblog/headimg/" + imgUrl; //이미지 풀 경로
+        imgUrl = "/images/headimg/" + imgUrl; //이미지 풀 경로
         String imgName = imgUrl.substring(imgUrl.lastIndexOf('/')+1); //풀 경로로부터 파일이름만 추출
 
         headImg.setImgName(imgName);

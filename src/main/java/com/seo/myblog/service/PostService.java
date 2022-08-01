@@ -121,6 +121,7 @@ public class PostService {
             postDTO.setAttachedFileName(attachedFile.getOrgFileName());
         }
 
+        postDTO.setPostId(post.getId());
         postDTO.setTitle(post.getTitle());
         postDTO.setHook_text(post.getHook_text());
         postDTO.setContent(post.getContent());

@@ -2,6 +2,7 @@ package com.seo.myblog.controller;
 
 import com.seo.myblog.dto.CategoryDTO;
 import com.seo.myblog.dto.MemberFormDTO;
+import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
 import com.seo.myblog.service.CategoryService;
 import com.seo.myblog.service.PostService;
@@ -13,8 +14,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Controller
@@ -74,6 +77,30 @@ public class BlogController {
         
         //포스트 쓰기 성공할경우 블로그 메인으로 리다이렉트
         return "redirect:/blog/";
+    }
+
+
+    /*
+    * Post 상세 페이지 조회
+    * */
+    @GetMapping(value = "/blog/{postId}")
+    public String postDetail(@PathVariable("postId") Long postId, Model model){
+
+        PostDTO postDTO;
+
+        try {
+            postDTO = postService.getPost(postId);
+        } catch (EntityNotFoundException e){
+            model.addAttribute("errMsg","등록되지 않은 포스트 입니다.");
+            return "/blog/list";
+        } catch (Exception e){
+            model.addAttribute("errMsg","포스트를 불러오는데 실패하였습니다.");
+            return "/blog/list";
+        }
+
+        model.addAttribute("postDTO", postDTO);
+        return "/blog/postDetail";
+
     }
 }
 

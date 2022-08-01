@@ -13,6 +13,8 @@ import java.util.List;
 @Setter
 @ToString
 public class PostDTO {
+    private Long postId; //포스트Id;
+
     private String title; //제목
 
     private String hook_text; //요약

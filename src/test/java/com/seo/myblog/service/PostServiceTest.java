@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-@TestPropertySource(locations = "classpath:application-test.properties")
+//@TestPropertySource(locations = "classpath:application-test.properties")
 class PostServiceTest {
 
     @Autowired
@@ -100,7 +100,7 @@ class PostServiceTest {
 
     @Test
     void getPost() throws Exception{
-        PostDTO postDTO = postService.getPost(13L);
+        PostDTO postDTO = postService.getPost(5L);
         System.out.println(postDTO);
     }
 }
