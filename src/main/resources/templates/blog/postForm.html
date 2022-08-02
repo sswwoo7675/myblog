@@ -4,7 +4,7 @@
       layout:decorate="~{layout_fullwith}">
 
 <head>
-    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
+    <script th:src="@{/js/ckeditor.js}"></script>
 </head>
 
 <th:block layout:fragment="css">
@@ -81,13 +81,30 @@
 
 
     <script th:inline="javascript">
-        ClassicEditor
+/*        ClassicEditor
             .create( document.querySelector( '.editor' ),{
                 ckfinder:{
                     uploadUrl: '/ajax/uploadContentImg'
                 }
             })
             .catch( error => {
+                console.error( error );
+            } );*/
+        ClassicEditor
+            .create( document.querySelector( '.editor' ), {
+                licenseKey: '',
+                ckfinder:{
+                    uploadUrl: '/ajax/uploadContentImg'
+                }
+            } )
+            .then( editor => {
+                window.editor = editor;
+
+            } )
+            .catch( error => {
+                console.error( 'Oops, something went wrong!' );
+                console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+                console.warn( 'Build id: bs03ogvipfit-mir5mhpvo533' );
                 console.error( error );
             } );
     </script>

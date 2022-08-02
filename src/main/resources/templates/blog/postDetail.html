@@ -7,16 +7,23 @@
 <head>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <script th:src="@{/js/ckeditor.js}"></script>
 </head>
 
+<th:block layout:fragment="css">
+    <style>
+        .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused){
+            border: none;
+        }
+        .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected, .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected:hover{
+            outline: none;
+        }
+    </style>
+</th:block>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
         $(document).ready(function (){
-           $('#content-area img').each(function (){
-              $(this).addClass("img-fluid");
-           });
-
            $('#post-delete').click(function (){
               deletePost();
            });
@@ -91,10 +98,10 @@
         <!--헤드 이미지-->
         <img class="img-fluid rounded" th:if="${postDTO.headImgUrl != null}" th:src="${postDTO.headImgUrl}" />
         <img class="img-fluid rounded" th:unless="${postDTO.headImgUrl != null}" th:src="'https://picsum.photos/seed/' + ${postDTO.postId} + '/800/200'" />
+        <hr />
 
-        <hr/>
         <!-- 본문 -->
-        <div id="content-area" th:utext="${postDTO.content}"></div>
+        <textarea class="editor" th:text="${postDTO.content}"></textarea>
         <br /><br />
 
         <!-- 태그영역 -->
@@ -119,6 +126,28 @@
     <div id="comment-area">
 
     </div>
+
+    <script th:inline="javascript">
+        ClassicEditor
+            .create( document.querySelector( '.editor' ), {
+                licenseKey: '',
+            } )
+            .then( editor => {
+                const toolbarElement = editor.ui.view.toolbar.element;
+
+                editor.enableReadOnlyMode(editor.id);
+                toolbarElement.style.display = 'none';
+
+                window.editor = editor;
+
+            } )
+            .catch( error => {
+                console.error( 'Oops, something went wrong!' );
+                console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+                console.warn( 'Build id: bs03ogvipfit-mir5mhpvo533' );
+                console.error( error );
+            } );
+    </script>
 
 </div>
 
