@@ -28,6 +28,7 @@ public class PageInfo {
 
     public PageInfo(Page page){
         totalPage = page.getTotalPages();
+        makePageList(page.getPageable());
     }
 
     private void makePageList(Pageable pageable){

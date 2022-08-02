@@ -1,13 +1,13 @@
 package com.seo.myblog.controller;
 
-import com.seo.myblog.dto.CategoryDTO;
-import com.seo.myblog.dto.MemberFormDTO;
-import com.seo.myblog.dto.PostDTO;
-import com.seo.myblog.dto.PostFormDTO;
+import com.seo.myblog.dto.*;
 import com.seo.myblog.service.CategoryService;
 import com.seo.myblog.service.PostService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -31,7 +31,16 @@ public class BlogController {
 
     //블로그 메인 화면 출력//
     @GetMapping(value = {"/blog/","/blog/list"})
-    public String blogList(Optional<Long> page){
+    public String blogList(Optional<Integer> page, Model model){
+        //pageable 생성: 페이지 값이 없을경우 0(첫페이지), 있을경우 페이지 값 -1, size(페이지 당 자료개수)는 5개로 설정
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get()-1 : 0,5);
+
+        //모든 포스트 조회(페이징처리), 페이지 정보 생성
+        Page<PostDTO> postDTOS = postService.getAllPost(pageable);
+        PageInfo pageInfo = new PageInfo(postDTOS);
+
+        model.addAttribute("postDTOS",postDTOS);
+        model.addAttribute("pageInfo",pageInfo);
         return "/blog/list";
     }
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="script">
@@ -8,7 +9,59 @@
 </th:block>
 
 <div layout:fragment="content">
-    <h1>포스트 리스트</h1>
+    <!--포스트 쓰기 버튼-->
+    <a sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-info btn-sm float-right" href="#" role="button">
+        <i class="fas fa-pen"></i> 새 포스트 쓰기
+    </a>
+
+    <!-- 상단 -->
+    <h1>Blog</h1>
+
+    <!-- 포스트 목록 -->
+    <div class="card mb-4" th:each="postDTO:${postDTOS}">
+        <img th:if="${postDTO.headImgUrl!=null}" class="card-img-top" th:src="${postDTO.headImgUrl}" />
+        <img th:unless="${postDTO.headImgUrl!=null}" class="card-img-top" th:src="'https://picsum.photos/seed/' + ${postDTO.postId} + '/800/200'" />
+
+        <div class="card-body">
+            <!--카테고리-->
+            <span th:if="${postDTO.categoryDTO!=null}" class="badge badge-secondary float-right" th:text="${postDTO.categoryDTO.name}"></span>
+            <span th:unless="${postDTO.categoryDTO!=null}" class="badge badge-secondary float-right">미분류</span>
+
+            <!--제목, 요약-->
+            <h2 class="card-title" th:text="${postDTO.title}"></h2>
+            <h5 class="text-muted" th:text="${postDTO.hook_text}"></h5>
+
+            <!-- 태그 -->
+            <th:block th:if="${postDTO.tags != null}">
+                <i class="fas fa-tags"></i>
+                <th:block th:each="tag:${postDTO.tags}">
+                    <a href="#">
+                        <span class="badge badge-pill badge-light" th:text="${tag}"></span>
+                    </a>
+                </th:block>
+                <br /><br />
+            </th:block>
+            <a th:href="'/blog/' + ${postDTO.postId}" class="btn btn-primary">Read More &rarr;</a>
+        </div>
+
+        <div class="card-footer text-muted">
+            Posted on [[${postDTO.postDate}]] by <a href="#" th:text="${postDTO.writer}"></a>
+        </div>
+    </div>
+
+    <!-- 페이징 번호 -->
+    <ul class="pagination justify-content-center mb-4">
+        <li class="page-item" th:if="${pageInfo.prev}">
+            <a th:href="@{/blog/list(page=${pageInfo.start - 1})}" aria-label="Previous" class="page-link"><span aria-hidden="true">Previous</span></a>
+        </li>
+        <li class="page-item" th:each="pagenum:${pageInfo.pageList}" th:classappend="${pageInfo.page == pagenum} ? 'active' : ''">
+            <a th:href="@{/blog/list(page=${pagenum})}" class="page-link">[[${pagenum}]]</a>
+        </li>
+        <li class="page-item" th:if="${pageInfo.next}">
+            <a th:href="@{/blog/list(page=${pageInfo.end + 1})}" aria-label="Next" class="page-link"><span aria-hidden="true">Next</span></a>
+        </li>
+    </ul>
+
 </div>
 
 </html>

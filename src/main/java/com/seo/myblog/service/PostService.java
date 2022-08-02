@@ -101,6 +101,7 @@ public class PostService {
     /*
     * 포스트 정보 불러오기
     * */
+    @Transactional(readOnly = true)
     public PostDTO getPost(Long postId) throws Exception{
         Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new); //포스트 Entity 불러오기
         PostDTO postDTO = new PostDTO();
@@ -149,6 +150,7 @@ public class PostService {
     /*
     * 모든 포스트 정보 조회
     * */
+    @Transactional(readOnly = true)
     public Page<PostDTO> getAllPost(Pageable pageable){
         List<Post> postList = postRepository.findPosts(pageable); //모든 post조회
         Long count = postRepository.count(); //엔티티 총 개수

@@ -20,6 +20,7 @@ public class CategoryService {
     /*
     * 모든 카테고리 정보 조회
     * */
+    @Transactional(readOnly = true)
     public List<CategoryDTO> getAllCategories(){
         //모든 카테고리 Entity 조회
         List<Category> categoryList = categoryRepository.findAll();

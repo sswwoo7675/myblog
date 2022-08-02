@@ -34,6 +34,7 @@ public class MemberService implements UserDetailsService { //UserDetailsService 
     }
 
     //중복 회원 확인 메서드(이메일과 닉네임 체크)
+    @Transactional(readOnly = true)
     public void validateDuplicateMember(String email, String nick) throws DuplicateMemberException{
         Optional<Member> findMember1 = memberRepository.findByEmailAndIsSocial(email,false); //이메일, 소셜여부로 Member찾기
         Optional<Member> findMember2 = memberRepository.findByNick(nick); //닉네임으로 Member찾기
