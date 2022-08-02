@@ -5,12 +5,27 @@
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let errMsg = [[${errMsg}]];
 
+        if(errMsg){
+            alert(errMsg);
+        }
+    </script>
+</th:block>
+
+<th:block layout:fragment="css">
+    <style>
+        .card-img-top{
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
 </th:block>
 
 <div layout:fragment="content">
     <!--포스트 쓰기 버튼-->
-    <a sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-info btn-sm float-right" href="#" role="button">
+    <a sec:authorize="hasAnyAuthority('ROLE_ADMIN')" class="btn btn-info btn-sm float-right" href="/admin/blogPost" role="button">
         <i class="fas fa-pen"></i> 새 포스트 쓰기
     </a>
 

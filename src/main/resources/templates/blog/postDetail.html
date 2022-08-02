@@ -4,6 +4,11 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
@@ -11,7 +16,42 @@
            $('#content-area img').each(function (){
               $(this).addClass("img-fluid");
            });
+
+           $('#post-delete').click(function (){
+              deletePost();
+           });
+
+            function deletePost(){
+                let token = $("meta[name='_csrf']").attr("content");
+                let header = $("meta[name='_csrf_header']").attr("content");
+
+                let url = "/blog/" + [[${postDTO.postId}]]
+
+                $.ajax({
+                    url:url,
+                    type: "DELETE",
+                    beforeSend: function (xhr){
+                        xhr.setRequestHeader(header,token);
+                    },
+                    dataType: "json",
+                    cache: false,
+                    success: function (result, status){
+                        alert("삭제가 완료되었습니다.");
+                        location.href = '/blog/list';
+                    },
+                    error: function (jqXHR, status, error){
+                        if(jqXHR.status == 401){
+                            alert(jqXHR.responseText);
+                            location.href = '/blog/list';
+                        } else {
+                            alert(jqXHR.responseText);
+                            location.href = '/blog/list';
+                        }
+                    }
+                });
+            }
         });
+
     </script>
 </th:block>
 
@@ -30,10 +70,18 @@
         </p>
 
         <hr/>
+
+        <!-- 포스트 삭제 버튼 -->
+        <a id="post-delete" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}" class="btn btn-danger btn-sm float-right ml-1" role="button">
+            <i class="fas fa-trash"></i> 포스트 삭제
+        </a>
+
         <!-- 포스트 수정 버튼 -->
-        <a sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}" class="btn btn-info btn-sm float-right" role="button">
+        <a sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}" class="btn btn-info btn-sm float-right" href="#" role="button">
             <i class="fas fa-pen"></i> 포스트 수정
         </a>
+
+
 
         <!-- 작성날짜 -->
         <p th:text="'Posted on ' + ${postDTO.postDate}"></p>

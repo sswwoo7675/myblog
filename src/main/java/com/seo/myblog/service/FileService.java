@@ -3,6 +3,7 @@ package com.seo.myblog.service;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -29,6 +30,21 @@ public class FileService {
         fos.close(); //업로드 작업 수행
 
         return folder + "/" + savedFileName; //저장된 파일경로 반환
+    }
+
+    /* 
+    *   파일 삭제 함수
+    * */
+    public void deleteFile(String path) throws Exception{
+        File file = new File(path);
+        
+        //파일이 존재하는지 확인 후 파일 삭제, 존재하지 않으면 예외 발생
+        if(file.exists()){
+            file.delete();
+        } else {
+            throw new FileNotFoundException("파일이 존재하지 않습니다.");
+        }
+
     }
 
 

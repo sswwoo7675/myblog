@@ -8,16 +8,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,23 +97,55 @@ public class BlogController {
     * Post 상세 페이지 조회
     * */
     @GetMapping(value = "/blog/{postId}")
-    public String postDetail(@PathVariable("postId") Long postId, Model model){
+    public String postDetail(@PathVariable("postId") Long postId, Model model, RedirectAttributes re){
 
         PostDTO postDTO;
 
         try {
             postDTO = postService.getPost(postId);
         } catch (EntityNotFoundException e){
-            model.addAttribute("errMsg","등록되지 않은 포스트 입니다.");
-            return "/blog/list";
+            re.addFlashAttribute("errMsg","등록되지 않은 포스트 입니다.");
+            return "redirect:/blog/list";
         } catch (Exception e){
-            model.addAttribute("errMsg","포스트를 불러오는데 실패하였습니다.");
-            return "/blog/list";
+            re.addFlashAttribute("errMsg","포스트를 불러오는데 실패하였습니다.");
+            return "redirect:/blog/list";
         }
 
         model.addAttribute("postDTO", postDTO);
         return "/blog/postDetail";
 
+    }
+
+    /*
+    * 포스트 삭제
+    * */
+    @DeleteMapping(value = "/blog/{postId}")
+    public @ResponseBody ResponseEntity postDelete(@PathVariable("postId") Long postId, @AuthenticationPrincipal UserInfoDTO userInfoDTO){
+        //비 로그인시 삭제권한 없음
+        if(userInfoDTO==null){
+            return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        //로그인 사용자의 닉네임 얻어옴
+        String nick = userInfoDTO.getNick();
+
+        //로그인 사용자가 쓴 포스트 인지 검증
+        try {
+            if(!postService.validatePost(postId,nick)){
+                return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);
+            }
+        }catch (Exception e){
+            return new ResponseEntity<String>("존재하지 않는 포스트입니다", HttpStatus.NOT_FOUND);
+        }
+
+        //포스트 삭제 시도
+        try {
+            postService.deletePost(postId);
+        } catch (Exception e){
+            return new ResponseEntity<String>("포스트 삭제에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Long>(postId,HttpStatus.OK);
     }
 }
 

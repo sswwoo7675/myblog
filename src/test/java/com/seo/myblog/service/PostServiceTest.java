@@ -84,8 +84,7 @@ class PostServiceTest {
                 .orElseThrow(EntityNotFoundException::new);
         //저장된 contentImg들 불러오기
         List<ContentImg> savedContentImgs = contentImgRepository
-                .findByPostId(savedPost.getId())
-                .orElseThrow(EntityNotFoundException::new);
+                .findByPostId(savedPost.getId());
 
         //postFormDTO의 정보와 db에 저장된 정보들이 맞는지 검증
         assertEquals(postFormDTO.getTitle(),savedPost.getTitle());
@@ -117,5 +116,10 @@ class PostServiceTest {
         postDTOPage.getContent().forEach(postDTO -> {
             System.out.println(postDTO);
         });
+    }
+
+    @Test
+    void deletePost() throws Exception{
+        postService.deletePost(20L);
     }
 }

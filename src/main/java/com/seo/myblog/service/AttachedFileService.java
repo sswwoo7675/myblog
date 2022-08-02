@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,5 +37,17 @@ public class AttachedFileService {
         attachedFile.setFileUrl(fileUrl);
 
         return attachedFileRepository.save(attachedFile).getId();
+    }
+
+    /*
+    * attachedFile 삭제
+    * */
+    public void deleteAttachedFile(AttachedFile attachedFile) throws Exception{
+        //파일 저장 경로 불러와서 파일 삭제하기
+        String path = attachedFileLocation + attachedFile.getFileUrl().split("attached")[1];
+        fileService.deleteFile(path);
+
+        //db에서 정보 삭제
+        attachedFileRepository.delete(attachedFile);
     }
 }

@@ -1,9 +1,6 @@
 package com.seo.myblog.service;
 
-import com.seo.myblog.Repository.AttachedFileRepository;
-import com.seo.myblog.Repository.CategoryRepository;
-import com.seo.myblog.Repository.HeadImgRepository;
-import com.seo.myblog.Repository.PostRepository;
+import com.seo.myblog.Repository.*;
 import com.seo.myblog.dto.CategoryDTO;
 import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
@@ -36,6 +33,8 @@ public class PostService {
     private final HeadImgRepository headImgRepository;
 
     private final ContentImgService contentImgService;
+
+    private final ContentImgRepository contentImgRepository;
 
     private final CategoryRepository categoryRepository;
 
@@ -191,12 +190,59 @@ public class PostService {
     }
 
     /*
+    * 포스트 제거
+    * */
+    public void deletePost(Long postId) throws Exception {
+        //postId 이용하여 ContentImg, HeadImg, AttachedFile 불러옴
+        List<ContentImg> contentImgList = contentImgRepository.findByPostId(postId);
+        Optional<HeadImg> optHeadImg = headImgRepository.findByPostId(postId);
+        Optional<AttachedFile> optAttachedFile = attachedFileRepository.findByPostId(postId);
+
+        //ContentImg가 존재할 경우 삭제
+        if(!contentImgList.isEmpty()){
+            for(ContentImg contentImg:contentImgList){
+                contentImgService.deleteContentImg(contentImg);
+            }
+        }
+        
+        //HeadImg가 존재할 경우 삭제
+        if(optHeadImg.isPresent()){
+            headImgService.deleteHeadImg(optHeadImg.get());
+        }
+        
+        //AttachedFile이 존재할 경우 삭제
+        if(optAttachedFile.isPresent()){
+            attachedFileService.deleteAttachedFile(optAttachedFile.get());
+        }
+
+        //post 제거
+        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+        postRepository.delete(post);
+    }
+
+    /*
+    * 포스트 작성자 검증
+    * */
+    @Transactional(readOnly = true)
+    public boolean validatePost(Long postId, String Nick) throws Exception{
+        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+
+        //포스트 작성자랑 로그인 사용자랑 다르다면 false
+        if(!post.getCreatedBy().equals(Nick)){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /*
      * 형식에 맞는 태그문자열로 변환하는 메서드(태그1/태그2/태그3)
      * */
     public String makeTagString(String tags) {
-        //태그구분문자 모두 ;로 통일
-        tags = tags.replace(",", ";");
-        String[] tagList = tags.split(";");
+        //태그구분문자 모두 /로 통일
+        tags = tags.replace(",", "/");
+        tags = tags.replace(";", "/");
+        String[] tagList = tags.split("/");
 
         String makeTags;
 
