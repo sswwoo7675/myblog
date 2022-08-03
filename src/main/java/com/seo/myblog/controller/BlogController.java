@@ -58,6 +58,33 @@ public class BlogController {
         return "/blog/postForm";
     }
 
+    @GetMapping(value = "/admin/editPost")
+    public String postEdit(Model model, Optional<Long> postId, RedirectAttributes re){
+        //postId를 받아오지 못했을경우 list로 리다이렉트
+        if(postId.isEmpty()){
+            re.addFlashAttribute("errMsg","잘못된 접근입니다.");
+            return "redirect:/blog/list";
+        }
+
+        //postFormDTO 불러오기
+        PostFormDTO postFormDTO;
+        try {
+            postFormDTO = postService.getPostFormDTO(postId.get());
+        } catch (Exception e){
+            re.addFlashAttribute("errMsg","오류로 인해 포스트 수정 페이지 접근에 실패하였습니다.");
+            return "redirect:/blog/" + postId.get();
+        }
+
+        //모든 카테고리 정보 조회
+        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
+        
+        //포스트 수정 페이지 반환
+        model.addAttribute("postFormDTO",postFormDTO);
+        model.addAttribute("categoryDTOList", categoryDTOList);
+        return "/blog/postEdit";
+
+    }
+
     /*포스트 글 쓰기 처리*/
     @PostMapping(value = {"/admin/blogPost"})
     public String postForm(@Validated PostFormDTO postFormDTO,

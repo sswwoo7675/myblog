@@ -221,6 +221,34 @@ public class PostService {
     }
 
     /*
+    * 포스트 수정 기능시 필요한 PostFormDTO 생성
+    * */
+    public PostFormDTO getPostFormDTO(Long postId) throws Exception{
+        //postId로 post불러오기
+        Post post = postRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
+
+        //postFormDTO로 변환
+        PostFormDTO postFormDTO = PostFormDTO.of(post);
+        
+        //headImg와 AttachedFile 불러오기
+        Optional<HeadImg> optHeadImg = headImgRepository.findByPostId(post.getId());
+        Optional<AttachedFile> optAttachedFile = attachedFileRepository.findByPostId(post.getId());
+
+        //headImg와 AttachedFile이 존재한다면 postFormDTO에 정보 저장
+        if(optHeadImg.isPresent()){
+            HeadImg headImg = optHeadImg.get();
+            postFormDTO.setHeadImgFileName(headImg.getOrgImgName());
+        }
+
+        if(optAttachedFile.isPresent()){
+            AttachedFile attachedFile = optAttachedFile.get();
+            postFormDTO.setUploadFileName(attachedFile.getOrgFileName());
+        }
+
+        return postFormDTO;
+    }
+
+    /*
     * 포스트 작성자 검증
     * */
     @Transactional(readOnly = true)

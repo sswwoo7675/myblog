@@ -122,4 +122,9 @@ class PostServiceTest {
     void deletePost() throws Exception{
         postService.deletePost(20L);
     }
+
+    @Test
+    void getPostFormDTO() throws Exception{
+        System.out.println(postService.getPostFormDTO(5L));
+    }
 }

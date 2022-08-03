@@ -30,14 +30,28 @@ public class PostFormDTO {
     List<String> contentImgs  = new ArrayList<>(); //본문에 포함된 이미지 경로
 
     MultipartFile headImgFile; //헤드 이미지 파일
-
+    
     MultipartFile uploadFile; //첨부파일
-
+    
+    //edit용
+    String headImgFileName; //헤드이미지 파일 이름
+    
+    String uploadFileName; //첨부파일 파일 이름
+    
+    boolean headImgClear; //헤드 이미지 삭제 여부
+    
+    boolean uploadFileClear; //파일 삭제 여부
+    
     private static ModelMapper modelMapper = new ModelMapper();
 
     //DTO => Entity
     public Post createPost(){
         return modelMapper.map(this, Post.class);
+    }
+
+    //Entity => DTO
+    public static PostFormDTO of(Post post){
+        return modelMapper.map(post,PostFormDTO.class);
     }
 
 }

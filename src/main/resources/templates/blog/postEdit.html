@@ -29,22 +29,22 @@
 
         $(document).ready(function (){
             $('#postbutton').on("click",function (e){
-               e.preventDefault();
+                e.preventDefault();
 
-               $('.ck-editor__main img').each(function(){
+                $('.ck-editor__main img').each(function(){
                     $("#postform").append("<input type='hidden' name='contentImgs' value='" + $(this).attr("src") + "'/>");
                 });
 
-               $('#postform').submit();
+                $('#postform').submit();
             });
         });
     </script>
 </th:block>
 
 <div layout:fragment="content">
-    <h1>Create New Post</h1>
+    <h1>Edit Post</h1>
     <hr />
-    <form id="postform" method="post" enctype="multipart/form-data" action="/admin/blogPost" th:object="${postFormDTO}">
+    <form id="postform" method="post" enctype="multipart/form-data" action="/admin/editPost" th:object="${postFormDTO}">
         <div id="input_title" class="form-group">
             <label for="title">제목</label>
             <input type="text" th:field="*{title}" class="form-control"/>
@@ -57,14 +57,44 @@
             <label for="content">본문</label>
             <textarea class="editor" th:field="*{content}"></textarea>
         </div>
-        <div id="input_headimage" class="form-group">
+
+        <div th:if="*{headImgFileName}" id="input_headimage" class="form-group">
             <label for="headImgFile">헤드 이미지</label>
-            <div><input type="file" th:field="*{headImgFile}" accept="image/*" /></div>
+            <div>
+                현재파일 :  <a href="#" th:text="*{headImgFileName}"></a>
+                <input type="checkbox" th:field="*{headImgClear}" />
+                <label for="headImgClear">삭제</label>
+                <br/>
+                변경 :
+                <input type="file" th:field="*{headImgFile}" accept="image/*" />
+            </div>
         </div>
-        <div id="input_uploadFile" class="form-group">
+
+        <div th:unless="*{headImgFileName}" id="input_headimage" class="form-group">
+            <label for="headImgFile">헤드 이미지</label>
+            <div>
+                <input type="file" th:field="*{headImgFile}" accept="image/*" />
+            </div>
+        </div>
+
+        <div th:if="*{uploadFileName}" id="input_uploadFile" class="form-group">
             <label for="uploadFile">파일 업로드</label>
-            <div><input type="file" th:field="*{uploadFile}" /></div>
+            <div>
+                현재파일 :  <a href="#" th:text="*{uploadFileName}"></a>
+                <input type="checkbox" th:field="*{uploadFileClear}" />
+                <label for="uploadFileClear">삭제</label>
+                <br/>
+                변경 : <input type="file" th:field="*{uploadFile}" />
+            </div>
         </div>
+
+        <div th:unless="*{uploadFileName}" id="input_uploadFile" class="form-group">
+            <label for="uploadFile">파일 업로드</label>
+            <div>
+               <input type="file" th:field="*{uploadFile}" />
+            </div>
+        </div>
+
         <div id="input_category" class="form-group">
             <label for="category">카테고리</label>
             <select th:field="*{categoryId}" class="form-control">
@@ -85,15 +115,15 @@
 
     <script th:src="@{/js/ckeditor.js}"></script>
     <script th:inline="javascript">
-/*        ClassicEditor
-            .create( document.querySelector( '.editor' ),{
-                ckfinder:{
-                    uploadUrl: '/ajax/uploadContentImg'
-                }
-            })
-            .catch( error => {
-                console.error( error );
-            } );*/
+        /*        ClassicEditor
+                    .create( document.querySelector( '.editor' ),{
+                        ckfinder:{
+                            uploadUrl: '/ajax/uploadContentImg'
+                        }
+                    })
+                    .catch( error => {
+                        console.error( error );
+                    } );*/
         ClassicEditor
             .create( document.querySelector( '.editor' ), {
                 licenseKey: '',
