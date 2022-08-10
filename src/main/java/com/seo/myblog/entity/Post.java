@@ -28,4 +28,12 @@ public class Post extends BaseEntity{
     @JoinColumn(name = "category_id")
     private Category category; //카테고리
 
+    public void updatePost(String title, String hook_text, String content, String tags, Category category){
+        this.title = title;
+        this.hook_text = hook_text;
+        this.content = content;
+        this.tags = tags;
+        this.category = category;
+    }
+
 }

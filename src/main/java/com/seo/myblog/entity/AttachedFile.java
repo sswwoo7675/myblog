@@ -26,4 +26,10 @@ public class AttachedFile {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public void updateAttachedFile(String fileName, String orgFileName, String fileUrl){
+        this.fileName = fileName;
+        this.orgFileName = orgFileName;
+        this.fileUrl = fileUrl;
+    }
 }

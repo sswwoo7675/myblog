@@ -3,6 +3,11 @@ package com.seo.myblog;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 @SpringBootTest
 class MyblogApplicationTests {
 
@@ -12,9 +17,16 @@ class MyblogApplicationTests {
 
 	@Test
 	void myTest(){
-		String text = "/attached/2022/08/01/b2470ba8-1ca5-4da9-b749-fd5d7a92a016.pdf";
-		String splitText = text.split("attached")[1];
-		System.out.println(splitText);
+		List<String> a = new LinkedList<>();
+		a.add("1");
+		a.add("2");
+		a.add("3");
+		a.add("4");
+		a.add("5");
+
+		Iterator it= a.iterator();
+
+
 	}
 
 }

@@ -85,6 +85,34 @@ public class BlogController {
 
     }
 
+    @PostMapping(value = "/admin/editPost")
+    public String postEdit(@Validated PostFormDTO postFormDTO,
+                           BindingResult bindingResult, RedirectAttributes re){
+        //필드 바인딩 에러시 에러메시지와 함께 수정 페이지로 리다이렉트
+        if(bindingResult.hasErrors()){
+            FieldError fieldError = bindingResult.getFieldError();
+            re.addFlashAttribute("errMsg",fieldError.getDefaultMessage());
+
+            return "redirect:/admin/editPost?postId=" + postFormDTO.getId();
+        }
+        
+        //포스트 쓰기 시도
+        try {
+            postService.updatePost(postFormDTO);
+        } catch (Exception e){
+            //실패 시 에러메시지와 함께 수정 페이지로 리다이렉트
+            re.addFlashAttribute("errMsg", "포스트 수정에 실패하였습니다.");
+
+            return "redirect:/admin/editPost?postId=" + postFormDTO.getId();
+        }
+
+        //포스트 수정 후 상세 페이지로 접근
+        return "redirect:/blog/" + postFormDTO.getId();
+
+    }
+
+
+
     /*포스트 글 쓰기 처리*/
     @PostMapping(value = {"/admin/blogPost"})
     public String postForm(@Validated PostFormDTO postFormDTO,

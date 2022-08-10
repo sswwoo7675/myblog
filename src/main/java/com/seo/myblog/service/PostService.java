@@ -188,6 +188,83 @@ public class PostService {
 
         return new PageImpl<PostDTO>(postDTOList,pageable,count);
     }
+    
+    /*
+    * 포스트 업데이트
+    * */
+    public void updatePost(PostFormDTO postFormDTO) throws Exception{
+        Post post = postRepository.findById(postFormDTO.getId()).orElseThrow(EntityNotFoundException::new);
+        
+        //수정 정보 얻어오기
+        String newTitle = postFormDTO.getTitle();
+        String newHookText = postFormDTO.getHook_text();
+        String newContent = postFormDTO.getContent();
+        String newTags = makeTagString(postFormDTO.getTags());
+        Category newCategory = null;
+
+        //카테고리 정보가 존재하면 카테고리 엔티티 얻어옴
+        if(postFormDTO.getCategoryId() != null){
+            Long categoryId = postFormDTO.getCategoryId();
+            newCategory = categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+        }
+
+        //포스트 정보 업데이트
+        post.updatePost(newTitle,newHookText,newContent,newTags,newCategory);
+
+        //postId 이용하여 HeadImg, AttachedFile 불러옴
+        List<ContentImg> contentImgList = contentImgRepository.findByPostId(post.getId());
+        Optional<HeadImg> optHeadImg = headImgRepository.findByPostId(post.getId());
+        Optional<AttachedFile> optAttachedFile = attachedFileRepository.findByPostId(post.getId());
+
+        //contentImg 업데이트
+        List<String> newContentImgs = postFormDTO.getContentImgs();
+        if(!(newContentImgs.isEmpty() && contentImgList.isEmpty())){
+            contentImgService.updateContentImg(newContentImgs, contentImgList, post);
+        }
+
+        //headImg업데이트
+        //업데이트 된 파일이 존재하면
+        if((postFormDTO.getHeadImgFile() != null)
+                && (!postFormDTO.getHeadImgFile().isEmpty())){
+            //이미 기존 파일이 존재할 경우 기존파일 제거 후 새로 업데이트(changeHeadImg메서드)
+            if(optHeadImg.isPresent()){
+                headImgService.changeHeadImg(postFormDTO.getHeadImgFile(), optHeadImg.get());
+            } else {
+                //기존 파일이 없는 경우 추가만 진행
+                HeadImg headImg = new HeadImg();
+                headImg.setPost(post);
+                headImgService.saveHeadImg(postFormDTO.getHeadImgFile(),headImg);
+            }
+        } else if(postFormDTO.isHeadImgClear()){ //업데이트 된 파일이 없고 기존 파일 삭제 체크박스가 체크되어 있는경우
+            //파일이 존재할 경우 기존파일 삭제
+            if(optHeadImg.isPresent()){
+                headImgService.deleteHeadImg(optHeadImg.get());
+            }
+        }
+
+        //AttachedFile 업데이트
+        //업데이트 된 파일이 존재하면
+        if((postFormDTO.getUploadFile() != null)
+                && (!postFormDTO.getUploadFile().isEmpty())){
+            //이미 기존 파일이 존재할 경우 기존파일 제거 후 새로 업데이트(changeAttachedFile메서드)
+            if(optAttachedFile.isPresent()){
+                attachedFileService.changeAttachedFile(postFormDTO.getUploadFile(), optAttachedFile.get());
+            } else {
+                //기존 파일이 없는 경우 추가만 진행
+                AttachedFile attachedFile = new AttachedFile();
+                attachedFile.setPost(post);
+                attachedFileService.saveAttachedFile(postFormDTO.getUploadFile(),attachedFile);
+            }
+        } else if(postFormDTO.isUploadFileClear()){ //업데이트 된 파일이 없고 기존 파일 삭제 체크박스가 체크되어 있는경우
+            //파일이 존재할 경우 기존파일 삭제
+            if(optAttachedFile.isPresent()){
+                attachedFileService.deleteAttachedFile(optAttachedFile.get());
+            }
+        }
+
+
+
+    }
 
     /*
     * 포스트 제거
@@ -284,4 +361,5 @@ public class PostService {
 
         return makeTags;
     }
+
 }

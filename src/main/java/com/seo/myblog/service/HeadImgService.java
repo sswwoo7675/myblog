@@ -40,6 +40,26 @@ public class HeadImgService {
     }
 
     /*
+    * HeadImg 변경용 메서드
+    * */
+
+    public void changeHeadImg(MultipartFile multipartFile, HeadImg headImg) throws Exception{
+        //기존 파일 삭제
+        String path = headImgLocation + headImg.getImgUrl().split("headimg")[1];
+        fileService.deleteFile(path);
+
+        //새로운 파일 추가
+        String orgImgName = multipartFile.getOriginalFilename(); //이미지 파일명 가져오기
+        String imgUrl = fileService.uploadFile(headImgLocation, orgImgName,multipartFile.getBytes()); //이미지 저장후 저장경로 가져옴
+        imgUrl = "/images/headimg/" + imgUrl; //이미지 풀 경로
+        String imgName = imgUrl.substring(imgUrl.lastIndexOf('/')+1); //풀 경로로부터 파일이름만 추출
+        
+        //db에 정보 업데이트
+        headImg.updateHeadImg(imgName,orgImgName,imgUrl);
+        
+    }
+
+    /*
     *  headImg 삭제
     * */
     public void deleteHeadImg(HeadImg headImg) throws Exception{

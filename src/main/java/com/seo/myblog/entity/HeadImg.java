@@ -26,4 +26,10 @@ public class HeadImg {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public void updateHeadImg(String imgName, String orgImgName, String imgUrl){
+        this.imgName = imgName;
+        this.orgImgName = orgImgName;
+        this.imgUrl = imgUrl;
+    }
 }

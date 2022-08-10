@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
       layout:decorate="~{layout}">
 
 <th:block layout:fragment="script">
@@ -30,7 +30,9 @@
     </a>
 
     <!-- 상단 -->
-    <h1>Blog</h1>
+    <h1>Blog
+        <small th:if="${searchInfo}" th:text="${searchInfo}" class="text-muted"></small>
+    </h1>
 
     <!-- 포스트 목록 -->
     <div class="card mb-4" th:each="postDTO:${postDTOS}">

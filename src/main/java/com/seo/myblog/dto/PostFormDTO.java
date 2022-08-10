@@ -34,6 +34,8 @@ public class PostFormDTO {
     MultipartFile uploadFile; //첨부파일
     
     //edit용
+    Long id;//포스트 id
+
     String headImgFileName; //헤드이미지 파일 이름
     
     String uploadFileName; //첨부파일 파일 이름

@@ -40,6 +40,24 @@ public class AttachedFileService {
     }
 
     /*
+    * AttachedFile 변경용 메서드
+    * */
+    public void changeAttachedFile(MultipartFile multipartFile, AttachedFile attachedFile) throws Exception{
+        //기존 파일 삭제하기
+        String path = attachedFileLocation + attachedFile.getFileUrl().split("attached")[1];
+        fileService.deleteFile(path);
+        
+        //새로운 파일 추가
+        String orgFileName = multipartFile.getOriginalFilename(); //파일명 가져오기
+        String fileUrl = fileService.uploadFile(attachedFileLocation,orgFileName, multipartFile.getBytes()); //파일 업로드 수행
+        fileUrl = "/attached/" + fileUrl; //저장된 파일 full경로
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1); //full경로로 부터 파일이름만 추출
+
+        //db에 정보 업데이트
+        attachedFile.updateAttachedFile(fileName,orgFileName,fileUrl);
+    }
+
+    /*
     * attachedFile 삭제
     * */
     public void deleteAttachedFile(AttachedFile attachedFile) throws Exception{
