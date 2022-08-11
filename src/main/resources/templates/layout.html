@@ -44,6 +44,26 @@
 
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
+
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 300px;
+        }
+
+        .my-footer{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 150px;
+        }
+    </style>
 </head>
 
 <body>
