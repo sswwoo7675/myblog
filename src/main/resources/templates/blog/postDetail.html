@@ -5,8 +5,6 @@
       layout:decorate="~{layout}">
 
 <head>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <script th:src="@{/js/ckeditor.js}"></script>
 </head>
 
@@ -114,7 +112,7 @@
         <th:block th:if="${postDTO.tags != null}">
             <i class="fas fa-tags"></i>
             <th:block th:each="tag:${postDTO.tags}">
-                <a href="#">
+                <a th:href="@{/blog/search(type='tag', searchWord=${tag})}">
                     <span class="badge badge-pill badge-light" th:text="${tag}"></span>
                 </a>
             </th:block>

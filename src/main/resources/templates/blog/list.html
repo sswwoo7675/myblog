@@ -31,7 +31,13 @@
 
     <!-- 상단 -->
     <h1>Blog
-        <small th:if="${searchInfo}" th:text="${searchInfo}" class="text-muted"></small>
+        <th:block th:if="${searchInfoDTO}">
+            <small th:if="${searchInfoDTO.type.equals('contentOrTitle')}" th:text="'Search: ' + ${searchInfoDTO.searchWord} + ' (' + ${searchCnt} + ')'" class="text-muted"></small>
+            <span th:if="${searchInfoDTO.type.equals('category')} and ${not postDTOS.isEmpty()}" th:text="${postDTOS.get(0).getCategoryDTO().name}" class="badge badge-secondary"></span>
+            <span th:if="${searchInfoDTO.type.equals('tag')}" class="badge badge-light">
+                <i class="fas fa-tags"></i>[[${searchInfoDTO.searchWord}]]([[${searchCnt}]])
+            </span>
+        </th:block>
     </h1>
 
     <!-- 포스트 목록 -->
@@ -52,7 +58,7 @@
             <th:block th:if="${postDTO.tags != null}">
                 <i class="fas fa-tags"></i>
                 <th:block th:each="tag:${postDTO.tags}">
-                    <a href="#">
+                    <a th:href="@{/blog/search(type='tag', searchWord=${tag})}">
                         <span class="badge badge-pill badge-light" th:text="${tag}"></span>
                     </a>
                 </th:block>
@@ -66,8 +72,21 @@
         </div>
     </div>
 
-    <!-- 페이징 번호 -->
-    <ul class="pagination justify-content-center mb-4">
+    <!-- 페이징 번호(검색)-->
+    <ul th:if="${searchInfoDTO}" class="pagination justify-content-center mb-4">
+        <li class="page-item" th:if="${pageInfo.prev}">
+            <a th:href="@{/blog/search(type=${searchInfoDTO.type}, searchWord=${searchInfoDTO.searchWord}, page=${pageInfo.start - 1})}" aria-label="Previous" class="page-link"><span aria-hidden="true">Previous</span></a>
+        </li>
+        <li class="page-item" th:each="pagenum:${pageInfo.pageList}" th:classappend="${pageInfo.page == pagenum} ? 'active' : ''">
+            <a th:href="@{/blog/search(type=${searchInfoDTO.type}, searchWord=${searchInfoDTO.searchWord}, page=${pagenum})}" class="page-link">[[${pagenum}]]</a>
+        </li>
+        <li class="page-item" th:if="${pageInfo.next}">
+            <a th:href="@{/blog/search(type=${searchInfoDTO.type}, searchWord=${searchInfoDTO.searchWord}, page=${pageInfo.end + 1})}" aria-label="Next" class="page-link"><span aria-hidden="true">Next</span></a>
+        </li>
+    </ul>
+
+    <!-- 페이징 번호(일반 list)-->
+    <ul th:unless="${searchInfoDTO}" class="pagination justify-content-center mb-4">
         <li class="page-item" th:if="${pageInfo.prev}">
             <a th:href="@{/blog/list(page=${pageInfo.start - 1})}" aria-label="Previous" class="page-link"><span aria-hidden="true">Previous</span></a>
         </li>

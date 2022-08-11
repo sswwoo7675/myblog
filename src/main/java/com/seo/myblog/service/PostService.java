@@ -4,6 +4,7 @@ import com.seo.myblog.Repository.*;
 import com.seo.myblog.dto.CategoryDTO;
 import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
+import com.seo.myblog.dto.SearchInfoDTO;
 import com.seo.myblog.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -147,15 +148,30 @@ public class PostService {
     }
 
     /*
-    * 모든 포스트 정보 조회
-    * */
+     * 모든 포스트 검색(전체검색, 카테고리 검색, 제목+내용, 태그)
+     * */
     @Transactional(readOnly = true)
-    public Page<PostDTO> getAllPost(Pageable pageable){
-        List<Post> postList = postRepository.findPosts(pageable); //모든 post조회
-        Long count = postRepository.count(); //엔티티 총 개수
+    public Page<PostDTO> searchPosts(SearchInfoDTO searchInfoDTO, Pageable pageable){
+        Page<Post> postList = null;
+        String searchType = searchInfoDTO.getType();
+
+        //검색 옵션에 따른 포스트 조회
+        if (searchType.equals("contentOrTitle")) {
+            postList = postRepository.findPostsByContentAndTitle(searchInfoDTO.getSearchWord(),pageable); //제목 + 내용
+        } else if(searchType.equals("category")){
+            Long categoryId = Long.parseLong(searchInfoDTO.getSearchWord());
+            postList = postRepository.findByCategoryIdOrderByRegTimeDesc(categoryId,pageable); //카테고리
+        } else if(searchType.equals("tag")){
+            postList = postRepository.findByTagsContainingOrderByRegTimeDesc(searchInfoDTO.getSearchWord(),pageable); //태그
+        } else {
+            postList = postRepository.findPosts(pageable); //모든 post조회
+        }
         
-        //Entity List를 DTO List로 변환
-        List<PostDTO> postDTOList= postList.stream().map(post -> {
+
+        Long count = postList.getTotalElements(); //엔티티 총 개수
+
+        //Page<Post> => List<DTO>로 변환
+        List<PostDTO> postDTOList = postList.stream().map(post -> {
             PostDTO postDTO = new PostDTO();
 
             Category category = post.getCategory();  //포스트의 카테고리 조회
@@ -185,10 +201,12 @@ public class PostService {
 
             return postDTO;
         }).collect(Collectors.toList());
-
+        
+        //Page<Post>형태로 반환
         return new PageImpl<PostDTO>(postDTOList,pageable,count);
     }
-    
+
+
     /*
     * 포스트 업데이트
     * */

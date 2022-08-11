@@ -39,11 +39,33 @@ public class BlogController {
         Pageable pageable = PageRequest.of(page.isPresent() ? page.get()-1 : 0,5);
 
         //모든 포스트 조회(페이징처리), 페이지 정보 생성
-        Page<PostDTO> postDTOS = postService.getAllPost(pageable);
+        SearchInfoDTO searchInfoDTO = new SearchInfoDTO();
+        searchInfoDTO.setType("all");
+        Page<PostDTO> postDTOS = postService.searchPosts(searchInfoDTO,pageable);
         PageInfo pageInfo = new PageInfo(postDTOS);
 
-        model.addAttribute("postDTOS",postDTOS);
+        model.addAttribute("postDTOS",postDTOS.getContent());
         model.addAttribute("pageInfo",pageInfo);
+        return "/blog/list";
+    }
+
+    @GetMapping(value = "/blog/search")
+    public String postSearch(Optional<Integer> page, SearchInfoDTO searchInfoDTO, Model model){
+        if(searchInfoDTO.getType() == null || searchInfoDTO.getSearchWord() == null){ //searchType이 null일 경우 블로그 리스트로 redirect
+            return "redirect:/blog/list";
+        }
+
+        //pageable 생성: 페이지 값이 없을경우 0(첫페이지), 있을경우 페이지 값 -1, size(페이지 당 자료개수)는 5개로 설정
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get()-1 : 0,5);
+
+        //포스트 조회(페이징처리), 페이지 정보 생성
+        Page<PostDTO> postDTOS = postService.searchPosts(searchInfoDTO,pageable);
+        PageInfo pageInfo = new PageInfo(postDTOS);
+
+        model.addAttribute("searchInfoDTO", searchInfoDTO);
+        model.addAttribute("postDTOS",postDTOS.getContent());
+        model.addAttribute("pageInfo",pageInfo);
+        model.addAttribute("searchCnt",postDTOS.getTotalElements());
         return "/blog/list";
     }
 

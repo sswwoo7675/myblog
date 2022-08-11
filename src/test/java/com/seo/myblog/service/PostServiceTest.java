@@ -4,6 +4,7 @@ import com.seo.myblog.Repository.ContentImgRepository;
 import com.seo.myblog.Repository.PostRepository;
 import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
+import com.seo.myblog.dto.SearchInfoDTO;
 import com.seo.myblog.entity.ContentImg;
 import com.seo.myblog.entity.Post;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,9 @@ class PostServiceTest {
     void getAllPost() {
         Pageable pageable = PageRequest.of(3,2);
 
-        Page<PostDTO> postDTOPage = postService.getAllPost(pageable);
+        SearchInfoDTO searchInfoDTO = new SearchInfoDTO();
+        searchInfoDTO.setType("all");
+        Page<PostDTO> postDTOPage = postService.searchPosts(searchInfoDTO, pageable);
 
         System.out.println(postDTOPage.getTotalPages());
         postDTOPage.getContent().forEach(postDTO -> {

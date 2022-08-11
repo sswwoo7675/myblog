@@ -7,7 +7,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-@Getter @Setter @ToString
+@Getter @Setter @ToString(exclude = {"content"})
 @Entity @Table(name = "post")
 public class Post extends BaseEntity{
     @Id
