@@ -17,18 +17,21 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+
     /*
-    * 모든 카테고리 정보 조회
+    * 모든 카테고리 정보 조회 : 카테고리 내 포스트 수 포함
     * */
     @Transactional(readOnly = true)
-    public List<CategoryDTO> getAllCategories(){
-        //모든 카테고리 Entity 조회
-        List<Category> categoryList = categoryRepository.findAll();
+    public List<CategoryDTO> getAllCategoriesInfo(){
+        List<Object[]> results = categoryRepository.findCategoryInfo();
 
-        //Entity 리스트를 DTO 리스트로 변경
-        List<CategoryDTO> categoryDTOList = categoryList.stream()
-                .map(category -> CategoryDTO.of(category))
-                .collect(Collectors.toList());
+        List<CategoryDTO> categoryDTOList = results.stream().map(objects -> {
+            CategoryDTO categoryDTO = new CategoryDTO();
+            categoryDTO.setId((Long) objects[0]); //category id
+            categoryDTO.setName((String) objects[1]);//category 이름
+            categoryDTO.setCountPost((Long) objects[2]);//category내 포스트 개수
+            return categoryDTO;
+        }).collect(Collectors.toList());
 
         return categoryDTOList;
     }

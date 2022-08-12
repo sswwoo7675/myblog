@@ -72,11 +72,7 @@ public class BlogController {
     /*포스트 쓰기 화면 출력*/
     @GetMapping(value = {"/admin/blogPost"})
     public String postForm(Model model) {
-        //모든 카테고리 정보 조회
-        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
-
         model.addAttribute("postFormDTO", new PostFormDTO());
-        model.addAttribute("categoryDTOList", categoryDTOList);
         return "/blog/postForm";
     }
 
@@ -97,12 +93,8 @@ public class BlogController {
             return "redirect:/blog/" + postId.get();
         }
 
-        //모든 카테고리 정보 조회
-        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
-        
         //포스트 수정 페이지 반환
         model.addAttribute("postFormDTO",postFormDTO);
-        model.addAttribute("categoryDTOList", categoryDTOList);
         return "/blog/postEdit";
 
     }
@@ -144,10 +136,6 @@ public class BlogController {
         if(bindingResult.hasErrors()){
             FieldError fieldError = bindingResult.getFieldError();
             model.addAttribute("errMsg",fieldError.getDefaultMessage());
-
-            //모든 카테고리 정보 조회
-            List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
-            model.addAttribute("categoryDTOList", categoryDTOList);
             return "/blog/postForm";
         }
         
@@ -157,11 +145,6 @@ public class BlogController {
         } catch (Exception e){
             //실패 시 에러메시지와 함께 페이지 반환
             model.addAttribute("errMsg", "포스트 등록에 실패하였습니다.");
-
-            //모든 카테고리 정보 조회
-            List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
-            model.addAttribute("categoryDTOList", categoryDTOList);
-
             return "/blog/postForm";
         }
         

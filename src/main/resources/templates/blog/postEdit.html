@@ -37,7 +37,35 @@
 
                 $('#postform').submit();
             });
+
+            //카테고리 정보 얻기
+            let token = $("meta[name='_csrf']").attr("content");
+            let header = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                url: "/category/info",
+                type: "GET",
+                beforeSend: function (xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                dataType: "json",
+                cache:false,
+                success: function (result, status){
+                    let currentCategory = [[${postFormDTO.categoryId}]]
+                    result.forEach(categoryDTO=>{
+                        if(categoryDTO.id){
+                            let $catOption = "<option value='" + categoryDTO.id + "'>" + categoryDTO.name + "</option>";
+                            $("#category-select").append($catOption);
+                        }
+                    });
+
+                    if(currentCategory){
+                        $("#category-select").val(currentCategory);
+                    }
+                }
+            });
         });
+
+
     </script>
 </th:block>
 
@@ -97,11 +125,8 @@
 
         <div id="input_category" class="form-group">
             <label for="category">카테고리</label>
-            <select th:field="*{categoryId}" class="form-control">
-                <option value="" selected>--------------</option>
-                <th:block th:each="categoryDTO:${categoryDTOList}">
-                    <option th:value="${categoryDTO.getId()}" th:text="${categoryDTO.getName()}"></option>
-                </th:block>
+            <select th:field="*{categoryId}" class="form-control" id="category-select">
+                <option value="">--------------</option>
             </select>
         </div>
         <div id="input_tags" class="form-group">

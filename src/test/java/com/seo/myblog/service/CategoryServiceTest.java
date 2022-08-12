@@ -41,18 +41,5 @@ class CategoryServiceTest {
         categoryRepository.save(category3);
     }
 
-    @Test
-    void getAllCategories() {
-        //테스트 카테고리 저장
-        saveCategory();
-        
-        List<CategoryDTO> categoryDTOList = categoryService.getAllCategories();
 
-        //사이즈 3 맞는지 검증
-        assertEquals(categoryDTOList.size(), 3);
-
-        categoryDTOList.forEach(categoryDTO -> {
-            System.out.println(categoryDTO);
-        });
-    }
 }

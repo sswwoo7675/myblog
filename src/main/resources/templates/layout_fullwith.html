@@ -5,6 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
     <title>Seo's Blog</title>
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
@@ -23,6 +26,26 @@
 
     <th:block layout:fragment="script"></th:block>
     <th:block layout:fragment="css"></th:block>
+
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            /* Margin bottom by footer height */
+            margin-bottom: 300px;
+        }
+
+        .my-footer{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            /* Set the fixed height of the footer here */
+            height: 150px;
+        }
+    </style>
 </head>
 
 <body>
