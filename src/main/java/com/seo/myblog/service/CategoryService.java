@@ -23,8 +23,10 @@ public class CategoryService {
     * */
     @Transactional(readOnly = true)
     public List<CategoryDTO> getAllCategoriesInfo(){
+        //쿼리실행
         List<Object[]> results = categoryRepository.findCategoryInfo();
 
+        //List<CategoryDTO> 형식으로 변경
         List<CategoryDTO> categoryDTOList = results.stream().map(objects -> {
             CategoryDTO categoryDTO = new CategoryDTO();
             categoryDTO.setId((Long) objects[0]); //category id

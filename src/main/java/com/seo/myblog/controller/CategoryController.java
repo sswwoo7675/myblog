@@ -16,6 +16,9 @@ import java.util.List;
 public class CategoryController {
     private final CategoryService categoryService;
 
+    /*
+    * 모든 카테고리 정보 제공 rest api
+    * */
     @GetMapping("/category/info")
     public @ResponseBody ResponseEntity categoryInfo(){
         List<CategoryDTO> categoryDTOList = categoryService.getAllCategoriesInfo();
