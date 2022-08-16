@@ -17,25 +17,29 @@ public class UserInfoDTO implements UserDetails, OAuth2User {
     private String nick;
     private String AUTHORITY;
 
+    private String avatar;
+
     private Map<String, Object> attr;
 
     /*
     일반 로그인 용
      */
-    public UserInfoDTO(String email, String password, String nick, String AUTHORITY) {
+    public UserInfoDTO(String email, String password, String nick, String avatar, String AUTHORITY) {
         this.email = email;
         this.password = password;
         this.nick = nick;
+        this.avatar = avatar;
         this.AUTHORITY = AUTHORITY;
     }
 
     /*
     소셜 로그인용
      */
-    public UserInfoDTO(String email, String password, String nick, String AUTHORITY, Map<String, Object> attr) {
+    public UserInfoDTO(String email, String password, String nick, String AUTHORITY, String avatar, Map<String, Object> attr) {
         this.email = email;
         this.password = password;
         this.nick = nick;
+        this.avatar = avatar;
         this.AUTHORITY = AUTHORITY;
         this.attr = attr;
     }
@@ -101,4 +105,6 @@ public class UserInfoDTO implements UserDetails, OAuth2User {
     public String getNick(){
         return nick;
     }
+
+    public String getAvatar(){return avatar;}
 }

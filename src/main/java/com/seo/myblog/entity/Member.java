@@ -26,6 +26,8 @@ public class Member extends BaseTimeEntity{
     private String nick; //닉네임
 
     private String address; //주소
+
+    private String avatar; //프로필 아바타
     
     private Boolean isSocial; //소셜로그인 여부
 
@@ -41,6 +43,7 @@ public class Member extends BaseTimeEntity{
         member.nick = memberFormDTO.getNick();
         member.address = memberFormDTO.getAddress();
         member.role = MemberRole.USER; //일반 유저 권한으로 설정
+        member.avatar = memberFormDTO.getAvatar();
         member.isSocial = false;
 
         return member;

@@ -34,25 +34,28 @@ public class Oauth2UserDetailService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        /*oAuth2User.getAttributes().forEach((k,v)->{
+        oAuth2User.getAttributes().forEach((k,v)->{
             System.out.println(k + " = " + v);
-        });*/
+        });
 
         String email = null;
         String nick = null;
+        String picture = null;
+
         if(client.equals("Google")){
             email = oAuth2User.getAttribute("email");
             nick = oAuth2User.getAttribute("name");
+            picture = oAuth2User.getAttribute("picture");
         }
-        Member member = savedMember(email, nick);//소셜 정보의 email과 name 사용하여 db저장 시도
+        Member member = savedMember(email, nick, picture);//소셜 정보의 email과 name, picture을 포함하여 db에 Member 테이블에 저장
 
-        UserInfoDTO userInfoDTO = new UserInfoDTO(member.getEmail(),member.getPassword(),member.getNick(),member.getRole().toString(),oAuth2User.getAttributes());
+        UserInfoDTO userInfoDTO = new UserInfoDTO(member.getEmail(),member.getPassword(),member.getNick(),member.getRole().toString(),member.getAvatar(),oAuth2User.getAttributes());
 
         return userInfoDTO;
 
     }
 
-    public Member savedMember(String email, String Nick){
+    public Member savedMember(String email, String Nick, String picture){
         Optional<Member> chkMember = memberRepository.findByEmailAndIsSocial(email,true); //이미 소셜로그인으로 가입한 멤버가 있는지 확인
 
         if(chkMember.isPresent()){ //존재하면 Member db저장 없이 바로 반환
@@ -63,6 +66,7 @@ public class Oauth2UserDetailService extends DefaultOAuth2UserService {
         memberFormDTO.setEmail(email);
         memberFormDTO.setPassword("social@$@#$KFFI#9");
         memberFormDTO.setNick(Nick); //MemberForm 정보 생성
+        memberFormDTO.setAvatar(picture);
 
         Member member = Member.createMember(memberFormDTO,passwordEncoder); //Member 객체생성
         member.setIsSocial(true); //소셜로그인이므로 isSocial True로 설정함

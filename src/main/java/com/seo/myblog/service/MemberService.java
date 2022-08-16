@@ -28,6 +28,7 @@ public class MemberService implements UserDetailsService { //UserDetailsService 
     public Long register(MemberFormDTO memberFormDTO) throws DuplicateMemberException{
         validateDuplicateMember(memberFormDTO.getEmail(), memberFormDTO.getNick()); //중복 회원 확인 메서드 실행
 
+        memberFormDTO.setAvatar("https://avatars.dicebear.com/api/human/" + memberFormDTO.getEmail() + ".svg"); //avatar url 설정
         Member member =  Member.createMember(memberFormDTO, passwordEncoder); //Member엔티티 생성
 
         return memberRepository.save(member).getId(); //db에 저장
@@ -59,7 +60,7 @@ public class MemberService implements UserDetailsService { //UserDetailsService 
                 .roles(member.getRole().toString())
                 .build();*/
 
-        return new UserInfoDTO(member.getEmail(),member.getPassword(),member.getNick(),member.getRole().toString());
+        return new UserInfoDTO(member.getEmail(),member.getPassword(),member.getNick(),member.getAvatar(),member.getRole().toString());
 
     }
 }

@@ -27,40 +27,65 @@
             alert(errMsg);
         }
 
+        //포스트 삭제
+        function deletePost(){
+            let token = $("meta[name='_csrf']").attr("content");
+            let header = $("meta[name='_csrf_header']").attr("content");
+
+            let url = "/blog/" + [[${postDTO.postId}]]
+
+            $.ajax({
+                url:url,
+                type: "DELETE",
+                beforeSend: function (xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                dataType: "json",
+                cache: false,
+                success: function (result, status){
+                    alert("삭제가 완료되었습니다.");
+                    location.href = '/blog/list';
+                },
+                error: function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                    location.href = '/blog/list';
+                }
+            });
+        }
+
+        //댓글 쓰기
+        function writeComment(){
+            let token = $("meta[name='_csrf']").attr("content");
+            let header = $("meta[name='_csrf_header']").attr("content");
+            let content = $("#content").val();
+            let postId = [[${postDTO.postId}]];
+
+            let writeData = {content: content, postId: postId};
+
+            $.ajax({
+                url: '/comment',
+                type: 'POST',
+                beforeSend: function (xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                data: JSON.stringify(writeData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "JSON",
+
+                success:function (result){
+                    alert("포스트 작성이 완료되었습니다.");
+                },
+                error: function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                }
+            });
+        }
+
         $(document).ready(function (){
            $('#post-delete').click(function (){
               deletePost();
            });
 
-            function deletePost(){
-                let token = $("meta[name='_csrf']").attr("content");
-                let header = $("meta[name='_csrf_header']").attr("content");
-
-                let url = "/blog/" + [[${postDTO.postId}]]
-
-                $.ajax({
-                    url:url,
-                    type: "DELETE",
-                    beforeSend: function (xhr){
-                        xhr.setRequestHeader(header,token);
-                    },
-                    dataType: "json",
-                    cache: false,
-                    success: function (result, status){
-                        alert("삭제가 완료되었습니다.");
-                        location.href = '/blog/list';
-                    },
-                    error: function (jqXHR, status, error){
-                        if(jqXHR.status == 401){
-                            alert(jqXHR.responseText);
-                            location.href = '/blog/list';
-                        } else {
-                            alert(jqXHR.responseText);
-                            location.href = '/blog/list';
-                        }
-                    }
-                });
-            }
         });
 
     </script>
@@ -128,7 +153,21 @@
 
     <!-- 댓글창 -->
     <div id="comment-area">
+        <div class="card my-4">
+            <h5 class="card-header">Leave a Comment:</h5>
+            <div class="card-body">
+                <div sec:authorize="isAuthenticated()" id="comment-box">
+                    <div class="form-group">
+                        <textarea name="content" cols="40" rows="5" class="form-control" id="content" required></textarea>
+                    </div>
+                    <button onclick="writeComment()" class="btn btn-primary">작성</button>
+                </div>
 
+                <a sec:authorize="isAnonymous()" role="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">
+                    댓글을 쓰려면 로그인 하세요
+                </a>
+            </div>
+        </div>
     </div>
 
     <script th:inline="javascript">
