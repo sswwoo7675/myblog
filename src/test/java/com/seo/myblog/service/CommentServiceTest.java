@@ -2,11 +2,14 @@ package com.seo.myblog.service;
 
 import com.seo.myblog.Repository.CommentRepository;
 import com.seo.myblog.dto.CommentDTO;
+import com.seo.myblog.dto.CommentResponseDTO;
 import com.seo.myblog.entity.Comment;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,5 +44,15 @@ class CommentServiceTest {
         assertEquals("랄랄라랄",savedComment.getContent());
         assertEquals(82L,postId);
         assertEquals("운영자임",memberNick);
+    }
+
+    @Test
+    void getAllComments() {
+        //82번 포스트 댓글 조회
+        List<CommentResponseDTO> result = commentService.getAllComments(82L);
+
+        result.forEach(commentResponseDTO -> {
+            System.out.println(commentResponseDTO);
+        });
     }
 }

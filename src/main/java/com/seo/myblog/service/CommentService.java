@@ -4,6 +4,7 @@ import com.seo.myblog.Repository.CommentRepository;
 import com.seo.myblog.Repository.MemberRepository;
 import com.seo.myblog.Repository.PostRepository;
 import com.seo.myblog.dto.CommentDTO;
+import com.seo.myblog.dto.CommentResponseDTO;
 import com.seo.myblog.entity.Comment;
 import com.seo.myblog.entity.Member;
 import com.seo.myblog.entity.Post;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,8 +37,9 @@ public class CommentService {
 
         Comment comment = new Comment();
 
-        //댓글 내용 셋팅
-        comment.setContent(commentDTO.getContent());
+        //댓글 내용 셋팅(\n => <br />로 변경)
+        String newContent = commentDTO.getContent().replace("\n","<br/>");
+        comment.setContent(newContent);
 
         //포스트, 멤버 정보 셋팅
         comment.setMember(member);
@@ -42,6 +47,29 @@ public class CommentService {
 
         //comment db에 저장
         return commentRepository.save(comment).getId();
+    }
+
+    /*
+    * 댓글 리스트 보기
+    * */
+    @Transactional(readOnly = true)
+    public List<CommentResponseDTO> getAllComments(Long postId){
+        //해당 포스트의 모든 comment 조회
+        List<Comment> commentList= commentRepository.findByPostIdOrderByRegTimeAsc(postId);
+
+        //List<CommentResponseDTO>형태로 변경
+        List<CommentResponseDTO> commentResponseDTOList = commentList.stream().map(comment -> {
+            CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
+            commentResponseDTO.setCommentId(comment.getId());
+            commentResponseDTO.setContent(comment.getContent());
+            commentResponseDTO.setCommentDate(comment.getRegTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+            commentResponseDTO.setMemberAvatar(comment.getMember().getAvatar());
+            commentResponseDTO.setMemberNick(comment.getMember().getNick());
+
+            return commentResponseDTO;
+        }).collect(Collectors.toList());
+
+        return commentResponseDTOList;
     }
 }
 

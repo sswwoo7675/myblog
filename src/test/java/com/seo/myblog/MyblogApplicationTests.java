@@ -17,16 +17,11 @@ class MyblogApplicationTests {
 
 	@Test
 	void myTest(){
-		List<String> a = new LinkedList<>();
-		a.add("1");
-		a.add("2");
-		a.add("3");
-		a.add("4");
-		a.add("5");
+		String aa = "테스트입니다\r\n아아아\r\n\r\n반갑";
 
-		Iterator it= a.iterator();
+		String newText = aa.replace("\r\n","-");
 
-
+		System.out.println(newText);
 	}
 
 }

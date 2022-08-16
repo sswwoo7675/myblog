@@ -40,7 +40,7 @@ public class SecurityConfig {
 
         http.authorizeRequests()
                 .mvcMatchers("/css/**","/js/**","/img/**","/ajax/**","/category/info").permitAll() //css js img등 정적파일 항상 접근 허용
-                .mvcMatchers("/","/member/**","/blog/**", "/images/**","/test/**").permitAll() //기본 주소 항상 접근 허용
+                .mvcMatchers("/","/member/**","/blog/**", "/images/**","/test/**","/comment/all").permitAll() //기본 주소 항상 접근 허용
                 .mvcMatchers("/admin/**").hasRole("ADMIN") //admin으로 시작하는 주소 admin권한을 가져야 접근 가능하도록 설정
                 .anyRequest().authenticated(); //나머지 url에 대해서는 로그인 해야 접근 가능
 
