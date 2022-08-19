@@ -71,6 +71,32 @@ public class CommentService {
 
         return commentResponseDTOList;
     }
+
+    /*
+    * 댓글 작성 사용자 검증(댓글 쓴 사람과 현재 로그인한 사용자의 닉네임 비교)
+    * */
+    @Transactional(readOnly = true)
+    public boolean validateComment(Long commentId, String nick) throws Exception{
+        //해당 댓글 조회
+        Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
+
+        //댓글 쓴 멤버 닉네임 조회
+        String writer = comment.getMember().getNick();
+
+        //닉네임 비교
+        if(writer.equals(nick)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
+    * 댓글삭제
+    * */
+    public void deleteComment(Long commentId) throws Exception {
+        commentRepository.deleteById(commentId);
+    }
 }
 
 

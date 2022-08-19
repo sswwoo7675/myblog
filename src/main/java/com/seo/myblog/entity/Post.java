@@ -24,7 +24,7 @@ public class Post extends BaseEntity{
     
     private String tags; //태그
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category; //카테고리
 

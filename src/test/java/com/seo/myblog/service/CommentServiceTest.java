@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,5 +55,23 @@ class CommentServiceTest {
         result.forEach(commentResponseDTO -> {
             System.out.println(commentResponseDTO);
         });
+    }
+
+    @Test
+    void validateComment() throws Exception{
+        boolean result = commentService.validateComment(101L, "하이트닉");
+        boolean result2 = commentService.validateComment(101L, "하이트닉2");
+
+        assertEquals(true,result);
+        assertEquals(false,result2);
+    }
+
+    @Test
+    void deleteComment() throws Exception{
+        commentService.deleteComment(101L);
+
+        Optional<Comment> result = commentRepository.findById(101L);
+
+        assertEquals(true,result.isEmpty());
     }
 }

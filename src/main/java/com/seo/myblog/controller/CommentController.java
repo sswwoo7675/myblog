@@ -54,4 +54,22 @@ public class CommentController {
 
         return new ResponseEntity<List<CommentResponseDTO>>(commentResponseDTOList,HttpStatus.OK);
     }
+
+    /*
+    * 댓글 삭제하기
+    * */
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity remove(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal UserInfoDTO userInfoDTO){
+        try {
+            if(!commentService.validateComment(commentId, userInfoDTO.getNick())){
+                return new ResponseEntity<String>("권한이 없습니다.",HttpStatus.FORBIDDEN);
+            }
+            commentService.deleteComment(commentId);
+            return new ResponseEntity<String>("삭제가 완료되었습니다.",HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<String>("오류로 인해 댓글 삭제를 할 수 없습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
 }

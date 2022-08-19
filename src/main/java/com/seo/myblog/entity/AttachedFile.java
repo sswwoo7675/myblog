@@ -23,7 +23,7 @@ public class AttachedFile {
 
     private String fileUrl; //첨부파일 조회 경로
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 

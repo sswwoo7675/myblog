@@ -16,6 +16,9 @@
         .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected, .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected:hover{
             outline: none;
         }
+        .ck-editor__main .table{
+            width: auto;
+        }
     </style>
 </th:block>
 
@@ -59,7 +62,6 @@
             let header = $("meta[name='_csrf_header']").attr("content");
             let content = $("#content").val();
             let postId = [[${postDTO.postId}]];
-
             let writeData = {content: content, postId: postId};
 
             $.ajax({
@@ -73,7 +75,7 @@
                 dataType: "json",
 
                 success:function (result){
-                    alert("댓글 작성이 완료되었습니다.")
+                    alert("댓글 작성이 완료되었습니다.");
                     loadComments();
                     $("#content").val("");
                 },
@@ -81,6 +83,7 @@
                     alert(jqXHR.responseText);
                 },
             });
+
         }
 
         //댓글 목록 불러오기
@@ -93,6 +96,7 @@
                url: url,
                type: "GET",
                dataType: "JSON",
+                cache:false,
 
                 success:function (result){
                     result.forEach(comment=> {
@@ -119,7 +123,7 @@
 
                             //로그인한 사용자 == 댓글 작성자이면 edit delete 버튼 추가
                             if(myNick == commentNick){
-                                let $editBtn = `<button class="btn btn-sm btn-info ml-1" onclick="editComment(${comment.commentId})">Edit</button>`;
+                                let $editBtn = `<button class="btn btn-sm btn-info ml-1" onclick="editSetting(${comment.commentId})">Edit</button>`;
                                 let $deleteBtn = `<button class="btn btn-sm btn-danger ml-1" onclick="deleteComment(${comment.commentId})">Delete</button>`;
                                 $("#comment-" + comment.commentId + " .util-buttons").append($editBtn);
                                 $("#comment-" + comment.commentId + " .util-buttons").append($deleteBtn);
@@ -131,6 +135,33 @@
                     alert(jqXHR.responseText);
                 }
             });
+        }
+
+        function deleteComment(commentId){
+            let token = $("meta[name='_csrf']").attr("content");
+            let header = $("meta[name='_csrf_header']").attr("content");
+            if(confirm("정말 삭제하시겠습니까?")){
+                $.ajax({
+                    url: '/comment/' + commentId,
+                    type: 'DELETE',
+                    beforeSend: function (xhr){
+                        xhr.setRequestHeader(header,token);
+                    },
+                    dataType: "json",
+                    cache: false,
+                    async: false,
+                    success: function (result){
+                        alert(result.responseText);
+                    },
+                    error: function (jqXHR, status, error){
+                        alert(jqXHR.responseText);
+                        return;
+                    }
+                });
+                loadComments();
+            } else{
+                return;
+            }
         }
 
         $(document).ready(function (){

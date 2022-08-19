@@ -8,6 +8,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class CommentDTO {
+    private Long commentId; //댓글id
 
     private String content; //댓글내용
     
