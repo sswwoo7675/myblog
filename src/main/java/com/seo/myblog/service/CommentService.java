@@ -97,6 +97,19 @@ public class CommentService {
     public void deleteComment(Long commentId) throws Exception {
         commentRepository.deleteById(commentId);
     }
+
+    /*
+    * 댓글수정
+    * */
+    public void updateComment(CommentDTO commentDTO) throws Exception{
+        //Comment Entity 불러오기
+        Comment comment = commentRepository.findById(commentDTO.getCommentId()).orElseThrow(EntityNotFoundException::new);
+
+        //댓글 내용 셋팅(\n => <br />로 변경)
+        String newContent = commentDTO.getContent().replace("\n","<br/>");
+
+        comment.updateComment(newContent);
+    }
 }
 
 

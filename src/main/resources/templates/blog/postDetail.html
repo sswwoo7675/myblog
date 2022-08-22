@@ -13,7 +13,8 @@
         .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused){
             border: none;
         }
-        .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected, .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected:hover{
+        .ck.ck-editor__editable.ck-blurred .ck-widget.ck-widget_selected, .ck.ck-editor__editable.ck-blurred
+        .ck-widget.ck-widget_selected:hover{
             outline: none;
         }
         .ck-editor__main .table{
@@ -106,10 +107,11 @@
                                 <div class="media-body">
                                       <div class="float-right util-buttons"></div>
                                       <h5 class="mt-0">
-                                          <b>${comment.memberNick}</b>&nbsp; &nbsp;<small class="text-muted">${comment.commentDate}</small>
+                                          <b>${comment.memberNick}</b>&nbsp; &nbsp;
+                                          <small class="text-muted">${comment.commentDate}</small>
                                       </h5>
                                       <p></p>
-                                      <p>${comment.content}</p>
+                                      <p class="comment-content">${comment.content}</p>
                                 </div>
                             </div>
                             <hr/>
@@ -123,8 +125,10 @@
 
                             //로그인한 사용자 == 댓글 작성자이면 edit delete 버튼 추가
                             if(myNick == commentNick){
-                                let $editBtn = `<button class="btn btn-sm btn-info ml-1" onclick="editSetting(${comment.commentId})">Edit</button>`;
-                                let $deleteBtn = `<button class="btn btn-sm btn-danger ml-1" onclick="deleteComment(${comment.commentId})">Delete</button>`;
+                                let $editBtn = `<button class="btn btn-sm btn-info ml-1"
+                                                            onclick="editSetting(${comment.commentId})">Edit</button>`;
+                                let $deleteBtn = `<button class="btn btn-sm btn-danger ml-1"
+                                                        onclick="deleteComment(${comment.commentId})">Delete</button>`;
                                 $("#comment-" + comment.commentId + " .util-buttons").append($editBtn);
                                 $("#comment-" + comment.commentId + " .util-buttons").append($deleteBtn);
                             }
@@ -164,6 +168,57 @@
             }
         }
 
+        function editSetting(commentId){
+            let content = $(`#comment-${commentId} .comment-content`).html();
+            content = content.replaceAll("<br>","\n");
+            $("#content").val(content);
+
+            $("#edit-button").data("commentId",commentId);
+            $("#edit-button").show();
+            $("#cancel-button").show();
+
+            $("#save-button").hide();
+            location.href="#comment-area";
+        }
+
+        function editComment(){
+            let token = $("meta[name='_csrf']").attr("content");
+            let header = $("meta[name='_csrf_header']").attr("content");
+            let commentId = $("#edit-button").data("commentId");
+            let content = $("#content").val();
+            let writeData = {commentId: commentId, content: content};
+
+            $.ajax({
+                url: '/comment',
+                type: 'Patch',
+                cache: false,
+                async: false,
+                beforeSend: function (xhr){
+                    xhr.setRequestHeader(header,token);
+                },
+                data: JSON.stringify(writeData),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+
+                success:function (result){
+                    alert(result.responseText);
+                },
+                error: function (jqXHR, status, error){
+                    alert(jqXHR.responseText);
+                },
+            });
+            loadComments();
+            cancelEdit();
+        }
+
+        function cancelEdit(){
+            $("#content").val("");
+            $("#edit-button").hide();
+            $("#cancel-button").hide();
+
+            $("#save-button").show();
+        }
+
         $(document).ready(function (){
            $('#post-delete').click(function (){
               deletePost();
@@ -177,7 +232,8 @@
 
 <div layout:fragment="content">
     <div id="post-area">
-        <span class="badge badge-secondary float-right" th:if="${postDTO.categoryDTO != null}" th:text="${postDTO.categoryDTO.name}"></span>
+        <span class="badge badge-secondary float-right" th:if="${postDTO.categoryDTO != null}"
+              th:text="${postDTO.categoryDTO.name}"></span>
         <span class="badge badge-secondary float-right" th:unless="${postDTO.categoryDTO != null}">미분류</span>
 
         <!-- Title -->
@@ -192,12 +248,14 @@
         <hr/>
 
         <!-- 포스트 삭제 버튼 -->
-        <a id="post-delete" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}" class="btn btn-danger btn-sm float-right ml-1" role="button">
+        <a id="post-delete" sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}"
+           class="btn btn-danger btn-sm float-right ml-1" role="button">
             <i class="fas fa-trash"></i> 포스트 삭제
         </a>
 
         <!-- 포스트 수정 버튼 -->
-        <a sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}" class="btn btn-info btn-sm float-right" th:href="@{/admin/editPost(postId=${postDTO.postId})}" role="button">
+        <a sec:authorize="isAuthenticated()" th:if="${#authentication.principal.Nick == postDTO.writer}"
+           class="btn btn-info btn-sm float-right" th:href="@{/admin/editPost(postId=${postDTO.postId})}" role="button">
             <i class="fas fa-pen"></i> 포스트 수정
         </a>
 
@@ -210,7 +268,8 @@
 
         <!--헤드 이미지-->
         <img class="img-fluid rounded" th:if="${postDTO.headImgUrl != null}" th:src="${postDTO.headImgUrl}" />
-        <img class="img-fluid rounded" th:unless="${postDTO.headImgUrl != null}" th:src="'https://picsum.photos/seed/' + ${postDTO.postId} + '/800/200'" />
+        <img class="img-fluid rounded" th:unless="${postDTO.headImgUrl != null}"
+             th:src="'https://picsum.photos/seed/' + ${postDTO.postId} + '/800/200'" />
         <hr />
 
         <!-- 본문 -->
@@ -229,7 +288,8 @@
         </th:block>
 
         <!-- 첨부파일 -->
-        <a th:href="@{/ajax/fileDownload(url=${postDTO.attachedFileUrl}, orgFileName=${postDTO.attachedFileName})}" th:if="${postDTO.attachedFileUrl != null}" class="btn btn-outline-dark" role="button" download>
+        <a th:href="@{/ajax/fileDownload(url=${postDTO.attachedFileUrl}, orgFileName=${postDTO.attachedFileName})}"
+           th:if="${postDTO.attachedFileUrl != null}" class="btn btn-outline-dark" role="button" download>
             <i class="fa fa-file"></i> [[${postDTO.attachedFileName}]]
         </a>
         <hr />
@@ -243,12 +303,18 @@
             <div class="card-body">
                 <div sec:authorize="isAuthenticated()" id="comment-box">
                     <div class="form-group">
-                        <textarea name="content" cols="40" rows="5" class="form-control" id="content" required></textarea>
+                        <textarea name="content" cols="40" rows="5" class="form-control" id="content" required>
+                        </textarea>
                     </div>
-                    <button onclick="writeComment()" class="btn btn-primary">작성</button>
+                    <button id="save-button" onclick="writeComment()" class="btn btn-primary">작성</button>
+                    <button id="edit-button" class="btn btn-primary ml-1" style="display: none"
+                            onclick="editComment()">수정</button>
+                    <button id="cancel-button" class="btn btn-danger ml-1" style="display: none;"
+                            onclick="cancelEdit()">취소</button>
                 </div>
 
-                <a sec:authorize="isAnonymous()" role="button" class="btn btn-outline-dark btn-block btn-sm" href="#" data-toggle="modal" data-target="#loginModal">
+                <a sec:authorize="isAnonymous()" role="button" class="btn btn-outline-dark btn-block btn-sm" href="#"
+                   data-toggle="modal" data-target="#loginModal">
                     댓글을 쓰려면 로그인 하세요
                 </a>
             </div>
@@ -274,7 +340,8 @@
             } )
             .catch( error => {
                 console.error( 'Oops, something went wrong!' );
-                console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
+                console.error( 'Please, report the following error on ' +
+                    'https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
                 console.warn( 'Build id: bs03ogvipfit-mir5mhpvo533' );
                 console.error( error );
             } );

@@ -32,4 +32,9 @@ public class Comment extends BaseTimeEntity{
     @JoinColumn(name = "member_id")
     private Member member; //댓글 작성 Member
 
+    public void updateComment(String content){
+        this.content = content;
+    }
+
+
 }

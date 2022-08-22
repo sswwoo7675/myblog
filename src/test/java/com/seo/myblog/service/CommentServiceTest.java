@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
+//@Transactional
 //@TestPropertySource(locations = "classpath:application-test.properties")
 class CommentServiceTest {
 
@@ -74,4 +74,16 @@ class CommentServiceTest {
 
         assertEquals(true,result.isEmpty());
     }
+
+    @Test
+    void updateComment() throws Exception{
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setCommentId(115L);
+        commentDTO.setContent("수정 테스트");
+
+        commentService.updateComment(commentDTO);
+
+
+    }
+
 }

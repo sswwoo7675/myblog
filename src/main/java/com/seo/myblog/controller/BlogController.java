@@ -51,8 +51,8 @@ public class BlogController {
 
     @GetMapping(value = "/blog/search")
     public String postSearch(Optional<Integer> page, SearchInfoDTO searchInfoDTO, Model model){
-        if(searchInfoDTO.getType() == null || searchInfoDTO.getSearchWord() == null){ //searchType이 null일 경우 블로그 리스트로 redirect
-            return "redirect:/blog/list";
+        if(searchInfoDTO.getType() == null || searchInfoDTO.getSearchWord() == null){
+            return "redirect:/blog/list"; //searchType이 null일 경우 블로그 리스트로 redirect
         }
 
         //pageable 생성: 페이지 값이 없을경우 0(첫페이지), 있을경우 페이지 값 -1, size(페이지 당 자료개수)는 5개로 설정
@@ -180,7 +180,8 @@ public class BlogController {
     * 포스트 삭제
     * */
     @DeleteMapping(value = "/blog/{postId}")
-    public @ResponseBody ResponseEntity postDelete(@PathVariable("postId") Long postId, @AuthenticationPrincipal UserInfoDTO userInfoDTO){
+    public @ResponseBody ResponseEntity postDelete(@PathVariable("postId") Long postId,
+                                                   @AuthenticationPrincipal UserInfoDTO userInfoDTO){
         //비 로그인시 삭제권한 없음
         if(userInfoDTO==null){
             return new ResponseEntity<String>("삭제 권한이 없습니다.", HttpStatus.FORBIDDEN);

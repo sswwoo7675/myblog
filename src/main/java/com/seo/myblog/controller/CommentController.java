@@ -69,7 +69,19 @@ public class CommentController {
         } catch (Exception e){
             return new ResponseEntity<String>("오류로 인해 댓글 삭제를 할 수 없습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
 
+    @PatchMapping("/comment")
+    public ResponseEntity edit(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal UserInfoDTO userInfoDTO){
+        try {
+            if(!commentService.validateComment(commentDTO.getCommentId(), userInfoDTO.getNick())) {
+                return new ResponseEntity<String>("권한이 없습니다.", HttpStatus.FORBIDDEN);
+            }
+            commentService.updateComment(commentDTO);
+            return new ResponseEntity<String>("댓글 수정이 완료되었습니다.",HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<String>("오류로 인해 댓글 수정을 할 수 없습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
