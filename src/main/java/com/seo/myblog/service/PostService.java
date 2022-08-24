@@ -1,10 +1,7 @@
 package com.seo.myblog.service;
 
 import com.seo.myblog.Repository.*;
-import com.seo.myblog.dto.CategoryDTO;
-import com.seo.myblog.dto.PostDTO;
-import com.seo.myblog.dto.PostFormDTO;
-import com.seo.myblog.dto.SearchInfoDTO;
+import com.seo.myblog.dto.*;
 import com.seo.myblog.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.swing.*;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -378,6 +376,26 @@ public class PostService {
         makeTags = String.join("/", tagList);
 
         return makeTags;
+    }
+
+    /*
+    * 메인페이지용 포스트 조회
+    * */
+    public List<MainPageDTO> loadPostByMainPage(Pageable pageable){
+        List<Object[]> result = postRepository.findPostWithAvatar(pageable);
+
+        List<MainPageDTO> mainPageDTOList = result.stream().map(object -> {
+            MainPageDTO mainPageDTO = MainPageDTO.builder()
+                    .postId((Long) object[0])
+                    .title((String) object[1])
+                    .writer((String) object[2])
+                    .regTime(((LocalDateTime) object[3]).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                    .avatar((String) object[4]).
+                    build();
+            return mainPageDTO;
+        }).collect(Collectors.toList());
+
+        return mainPageDTOList;
     }
 
 }

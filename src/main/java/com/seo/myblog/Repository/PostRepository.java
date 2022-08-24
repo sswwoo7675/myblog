@@ -1,5 +1,6 @@
 package com.seo.myblog.Repository;
 
+import com.seo.myblog.dto.MainPageDTO;
 import com.seo.myblog.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,12 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     Page<Post> findByCategoryIdOrderByRegTimeDesc(Long categoryId, Pageable pageable); //카테고리id로 포스트 조회
 
     Page<Post> findByTagsContainingOrderByRegTimeDesc(String tag, Pageable pageable); //태그로 검색하기
+
+    @Query("select p.id, p.title, p.createdBy, p.regTime, m.avatar " +
+            "from Post p join Member m " +
+            "on p.createdBy = m.nick " +
+            "order by p.regTime desc")
+    List<Object[]> findPostWithAvatar(Pageable pageable); //메인페이지 출력용 쿼리(최근 상위 포스트 조회)
 
 
 }

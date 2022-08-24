@@ -2,6 +2,7 @@ package com.seo.myblog.service;
 
 import com.seo.myblog.Repository.ContentImgRepository;
 import com.seo.myblog.Repository.PostRepository;
+import com.seo.myblog.dto.MainPageDTO;
 import com.seo.myblog.dto.PostDTO;
 import com.seo.myblog.dto.PostFormDTO;
 import com.seo.myblog.dto.SearchInfoDTO;
@@ -129,5 +130,16 @@ class PostServiceTest {
     @Test
     void getPostFormDTO() throws Exception{
         System.out.println(postService.getPostFormDTO(5L));
+    }
+
+    @Test
+    void loadPostByMainPage() {
+        Pageable pageable = PageRequest.of(0,3);
+
+        List<MainPageDTO> results = postService.loadPostByMainPage(pageable);
+
+        results.forEach(result->{
+            System.out.println(result);
+        });
     }
 }
